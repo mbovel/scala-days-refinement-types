@@ -118,7 +118,7 @@ def zip[A, B](
 
 <div class="fragment">
 
-1. **Runtime overhead**: assertions are checked at runtime, refinement types are checked at compile time (by default).
+1. **Run-time overhead**: assertions are checked at run time, refinement types are checked at compile time (by default).
 
 </div>
 
@@ -293,6 +293,9 @@ def ex1(l: List[Int] with l.isSorted) =
 ```scala
 given Ord[Int] = ...
 
+def max[T: Ord as ord, U <: T](x: U, y: U): U =
+  if ord.compare(x, y) >= 0 then x else y
+
 type Even = {v: Int with v % 2 == 0}
 
 def ex2: Even =
@@ -302,9 +305,6 @@ def ex2: Even =
 <div class="fragment">
 
 ```scala
-def max[T: Ord as ord, U <: T](x: U, y: U): U =
-  if ord.compare(x, y) >= 0 then x else y
-
 def maximum[T: Ord, U <: T](xs: List[U]): U =
   xs.reduce(max)
 ```
@@ -454,7 +454,7 @@ Why not always infer the precise type?
 
 <div class="fragment" data-fragment-index="4">
 
-Instead, precision is recovered **on demand**, by a standard mechanism called _selfification_, triggered by the bidirectional type-inference algorithm:
+Instead, precision is recovered **on demand**, when a refinement type is expected:
 
 ```scala
 val x: (Int with x == 42) = 42
@@ -541,16 +541,10 @@ And domain-specific normalizations such as:
   <: {v: Int with v == 2 * y + (x + y)}
 ```
 
-Also beta-reduction, ADT selections reductions and limited reasoning on LIA inequalities.
+Also beta-reduction, selection of case class fields (`Point(a, b).x` is `a`), and limited reasoning on linear inequalities.
 </div>
 
 </div>
-
-</div>
-
-<div class="notes">
-
-- Strictly stronger than substitution alone; intentionally weaker than equality saturation: one representative per class, so only one form is explored.
 
 </div>
 
@@ -717,9 +711,9 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 - **Pre-SIP and SIP** to make refinement types part of Scala.
 
-- **Better Solver** for what our lightweight solver cannot do.
+- **Better solver** for what our lightweight solver cannot do.
 
-- **A termination checker**, needed only for the termination-sensitive entailment rules, never systematically for every function in a predicate.
+- **A termination checker**, only for the solver rules that need it (see backup).
 
 - **Term-parameterized types**, to modularize predicates:
 
@@ -756,7 +750,7 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 
 </div>
 
-## Conclusion
+## Thank you!
 
 <div class="columns">
 
@@ -820,7 +814,7 @@ def zip[A, B](
 
 <div class="fragment">
 
-And singleton types, and opaque types, and compiletime operations:
+And singleton types, and opaque types, and compile-time operations:
 
 ```scala
 opaque type SizedList[
@@ -910,6 +904,24 @@ We plan to support subtyping with other Scala types in the future.
 
 </div>
 
+## Backup: Result types as assumptions
+
+The solver uses the result types of called functions as assumptions:
+
+```scala
+def double(x: Int): {res: Int with res == x + x} = x + x
+val d: {res: Int with res == 6} = double(3)
+
+def inc(x: Int): {res: Int with res == x + 1} = x + 1
+val w: {res: Int with res == 5} = inc(inc(3))
+```
+
+<div class="fragment">
+
+This rule needs the called function to terminate: a result type says nothing about a call that never returns.
+
+</div>
+
 ## Backup: LH Usability Barriers
 
 From [“Usability Barriers for Liquid Types”](https://dl.acm.org/doi/10.1145/3729327) [1]:
@@ -927,7 +939,7 @@ From [“Usability Barriers for Liquid Types”](https://dl.acm.org/doi/10.1145/
 
 ## Backup: `List.collect`
 
-Scala type parameters are _erased_ at runtime, so we cannot match on a `List[T]`.
+Scala type parameters are _erased_ at run time, so we cannot match on a `List[T]`.
 
 <div class="fragment">
 
