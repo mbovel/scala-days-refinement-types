@@ -1,0 +1,288 @@
+:root {
+    /* Configurable variables: https://github.com/hakimel/reveal.js/blob/master/css/theme/template/exposer.scss */
+    --r-main-font: InterVariable, sans-serif;
+    --primary-color: #c23939;
+    --selection-color: #c23939;
+    --r-heading-color: #ccc;
+    --r-background-color: #333;
+    --r-main-color: #ccc;
+    --r-main-font-size: 28px;
+    --r-link-color: var(--primary-color);
+    --r-link-color-hover: #ef6565;
+    --r-block-margin: 1.3em 0;
+    --r-heading-margin: .5em 0 1em;
+}
+
+/* Vertical gradient, darker at the top, over a heavily faded copy of the title
+   slide photo. Lower the gradient alpha to show more of the photo. */
+.reveal-viewport {
+    background-image:
+        linear-gradient(to bottom, rgba(16, 16, 16, 0.99), rgba(61, 61, 61, 0.98)),
+        url('scala_days.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.reveal {
+    font-weight: 300;
+}
+
+.reveal .slides {
+    text-align:left;
+}
+
+.reveal .slides section,
+.reveal .slides section > section,
+.reveal p {
+  line-height: 1.4;
+}
+
+#title-slide {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+h1.title {
+    margin-top: 0;
+}
+
+/* The title slide has a photo background (`title-slide-attributes` in
+   presentation.md). Its own lettering fills the lower half, so the title sits
+   at the top, over a dark fade that keeps it readable. */
+#title-slide {
+    justify-content: flex-start;
+    color: #fff;
+    --r-heading-color: #fff;
+    --r-link-color: #fff;
+    --primary-color: #fff;
+}
+
+.reveal .backgrounds > .slide-background:first-child::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5) 60%);
+}
+
+/* QR code to the slides and paper, in the free space right of the title. */
+#title-slide::after {
+    content: "";
+    background-image: url('qr-code.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    width: 7em;
+    height: 7em;
+}
+
+.reveal pre {
+    box-shadow: none;
+    line-height: 1.5;
+    font-size: 1em;
+    width: auto;
+}
+
+.reveal code {
+    background-color: #2e2e2e;
+    font-size: 0.8em;
+}
+
+.reveal pre code {
+    max-height: none;
+    display: block;
+    width: auto;
+}
+
+.reveal pre.small {
+    font-size: 0.9em;
+}
+
+:not(pre) code {
+    display: inline-block;
+    padding: 0.1em 0.3em;
+    border-radius: 6px;
+}
+
+.reveal small,
+.reveal small * {
+    vertical-align: inherit;
+}
+
+.reveal ul ul {
+    margin: 0;
+}
+
+.reveal li {
+    margin-bottom: 0.25em;
+}
+
+pre code.hljs {
+    border-radius: 6px;
+    padding: 0;
+}
+
+code {
+    background-color: #444;
+}
+
+:not(pre) code {
+    background-color: #444;
+    display: inline-block;
+    padding: 0.1em 0.3em;
+    border-radius: 6px;
+}
+
+.katex {
+    font-size: 1em;
+}
+
+.reveal h1 {
+    margin-bottom: 0.5em;
+    line-height: 1.1;
+}
+
+.reveal h1::after {
+    content: "";
+    display: block;
+    width: 3em;
+    height: 0.3em;
+    background-color: var(--primary-color);
+}
+
+.reveal h2 {
+    font-size: 1.6em;
+}
+
+.reveal h2::after {
+    content: "";
+    display: block;
+    width: 2em;
+    height: 0.2em;
+    background-color: var(--primary-color);
+}
+
+.reveal h3 {
+    margin-bottom: 1em;
+}
+
+.reveal h3::after {
+    content: "";
+    display: block;
+    width: 1.5em;
+    height: 0.15em;
+    background-color: var(--primary-color);
+}
+
+.reveal ul, .reveal ol {
+    display: block;
+    margin: var(--r-block-margin);
+    padding-left: 1em;
+}
+
+.reveal .slides section .fragment {
+    opacity: 0.05;
+    visibility: visible;
+}
+
+.reveal .slides section .fragment.visible {
+    opacity: 1;
+}
+
+.reveal ::selection {
+    background-color: var(--selection-color);
+}
+
+#TOC ul {
+    columns: 2;
+}
+
+.reveal .references {
+    margin: 0;
+}
+
+.reveal .slide-number {
+    font-size: 3vh;
+    padding: 0.5vh 1vh;
+    right: 1.5vh;
+    bottom: 1.5vh;
+}
+
+.katex-display {
+    margin: 0;
+}
+
+/* Display math that is narrower than its column, such as the value grammar,
+   sits flush left instead of centered. Apply with `<div class="math-left">`. */
+.math-left .katex-display > .katex {
+    text-align: left;
+}
+
+.hljs {
+    background-color: transparent !important;
+    color: var(--r-main-color);
+}
+
+.column {
+    scrollbar-width: none;
+}
+
+.column > *:first-child,
+.column > div:first-child > *:first-child,
+.column > ul:first-child > li:first-child > *:first-child {
+    margin-top: 0;
+}
+
+.paper {
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.reveal .progress {
+    height: 4px;
+    bottom: 4px;
+}
+
+.hljs-comment {
+    color: #888888;
+}
+
+.hljs-keyword, .hljs-built_in  {
+    color: var(--primary-color);
+}
+
+/* highlight.js tags Haskell's `let` as a title, which the theme paints like a
+   function name. Show it as a keyword instead. */
+.language-haskell .hljs-title {
+    color: var(--primary-color);
+}
+
+.hljs-function .hljs-title {
+    color: #527edd;
+}
+
+.hljs-type, .hljs-class .hljs-title, .hljs-number {
+    color: #e8b23f;
+}
+
+.column, .columns {
+    overflow: visible !important;
+}
+
+div.columns {
+    gap: 3.5rem;
+}
+
+div.column {
+    flex: 1 0 0;
+}
+
+/* Dense slides: scale the whole slide down a notch, for code- and math-heavy
+   content that cannot be trimmed further. Apply with `## Title {.dense}`. */
+.reveal section.dense {
+    font-size: 0.85em;
+}

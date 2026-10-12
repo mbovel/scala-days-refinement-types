@@ -1,0 +1,12 @@
+.DS_Store
+
+# Scala CLI, Bloop, Metals, sbt
+.bsp/
+.bloop/
+.metals/
+.scala-build/
+.vscode/
+target/
+
+# Local Stainless installation (see install.sh)
+.stainless/
