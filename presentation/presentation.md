@@ -425,6 +425,31 @@ Purity of functions is currently not enforced. Should it be?
 
 </div>
 
+## Purity of predicates
+
+By default, functions called in predicates are _assumed_ to be pure:
+
+```scala
+class Cell { var field: Int = 0 }
+def test(c: Cell) =
+  def getAndBump(): Int = { c.field += 1; c.field }
+  val v: Int with v == getAndBump() = getAndBump() // ✅ accepted
+```
+
+<div class="fragment">
+
+With [capture](https://docs.scala-lang.org/scala3/reference/experimental/cc.html) and separation checking, predicates are required to be pure:
+
+```scala
+import language.experimental.{captureChecking, separationChecking}
+class Cell extends caps.Stateful { var field: Int = 0 }
+def test(c: Cell^) =
+  def getAndBump(): Int = { c.field += 1; c.field }
+  val v: Int with v == getAndBump() = getAndBump() // ⛔️ not pure: uses {c}
+```
+
+</div>
+
 ## Mixed-precision type inference
 
 <div class="columns">
@@ -786,7 +811,7 @@ Theory:
 
 - **Rules for semantic implication.** We leave implication purely semantic; the solver's normalization rules are not yet verified against it.
 
-- **Enforcing purity.** Today a function called in a predicate is *assumed* pure. Capture and separation checking can ensure that predicates are pure.
+- **Enforcing purity by default.** Today a function called in a predicate is *assumed* pure, unless capture and separation checking are enabled.
 
 - **Classes and objects**, absent from the presented core calculus.
 

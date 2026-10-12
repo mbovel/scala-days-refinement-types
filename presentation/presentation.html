@@ -367,6 +367,25 @@ constructors of case classes without initializers.</p>
 <p>Purity of functions is currently not enforced. Should it be?</p>
 </div>
 </section>
+<section id="purity-of-predicates" class="slide level2">
+<h2>Purity of predicates</h2>
+<p>By default, functions called in predicates are <em>assumed</em> to be
+pure:</p>
+<pre class="scala"><code>class Cell { var field: Int = 0 }
+def test(c: Cell) =
+  def getAndBump(): Int = { c.field += 1; c.field }
+  val v: Int with v == getAndBump() = getAndBump() // ✅ accepted</code></pre>
+<div class="fragment">
+<p>With <a
+href="https://docs.scala-lang.org/scala3/reference/experimental/cc.html">capture</a>
+and separation checking, predicates are required to be pure:</p>
+<pre class="scala"><code>import language.experimental.{captureChecking, separationChecking}
+class Cell extends caps.Stateful { var field: Int = 0 }
+def test(c: Cell^) =
+  def getAndBump(): Int = { c.field += 1; c.field }
+  val v: Int with v == getAndBump() = getAndBump() // ⛔️ not pure: uses {c}</code></pre>
+</div>
+</section>
 <section id="mixed-precision-type-inference" class="slide level2">
 <h2>Mixed-precision type inference</h2>
 <div class="columns">
@@ -645,9 +664,9 @@ predicates:</p></li>
 <li><p><strong>Rules for semantic implication.</strong> We leave
 implication purely semantic; the solver’s normalization rules are not
 yet verified against it.</p></li>
-<li><p><strong>Enforcing purity.</strong> Today a function called in a
-predicate is <em>assumed</em> pure. Capture and separation checking can
-ensure that predicates are pure.</p></li>
+<li><p><strong>Enforcing purity by default.</strong> Today a function
+called in a predicate is <em>assumed</em> pure, unless capture and
+separation checking are enabled.</p></li>
 <li><p><strong>Classes and objects</strong>, absent from the presented
 core calculus.</p></li>
 </ul>

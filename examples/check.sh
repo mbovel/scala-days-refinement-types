@@ -2,7 +2,7 @@
 # Checks the examples:
 # 1. every file compiles on its own, and all files compile together;
 # 2. every commented-out line ending with `// error` fails to compile once
-#    uncommented.
+#    uncommented, with an error reported at that line.
 #
 # Usage: ./check.sh [files...]
 # Set SCALA to override the runner (default: `scala --cli-version 1.18.0`).
@@ -20,10 +20,13 @@ for f in "${files[@]}"; do
   for n in $(grep -nE '^[[:space:]]*// .* // error(:.*)?$' "$f" | cut -d: -f1); do
     tmp="$(mktemp -d)/$f"
     sed -E "${n}s|^([[:space:]]*)// |\1|" "$f" > "$tmp"
-    if "${SCALA[@]}" compile "$tmp" > /dev/null 2>&1; then
+    if out="$("${SCALA[@]}" compile "$tmp" 2>&1)"; then
       failures+=("$f:$n: compiles but is marked // error")
-    else
+    elif grep -q "$f:$n:" <<< "$out"; then
       echo "$f:$n: fails to compile, as expected"
+    else
+      echo "$out"
+      failures+=("$f:$n: fails to compile, but not at this line")
     fi
   done
   echo "::endgroup::"

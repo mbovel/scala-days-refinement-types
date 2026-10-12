@@ -20,4 +20,5 @@ jobs:
       - name: Check examples
         run: ./examples/check.sh
         env:
-          SCALA: scala-cli
+          # `scalaOrganization` is a restricted directive in plain scala-cli.
+          SCALA: scala-cli --power
