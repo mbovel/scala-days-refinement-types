@@ -699,7 +699,7 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 ## How to use
 
-Try it online in the [playground](https://matt.bovel.net/scala-refinement-types/playground/).
+Try it online in the [playground](https://matt.bovel.net/scala-refinement-types/playground/), and report issues at [github.com/epfl-lara/dotty](https://github.com/epfl-lara/dotty/issues).
 
 <div class="fragment">
 
