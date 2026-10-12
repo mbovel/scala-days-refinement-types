@@ -470,7 +470,7 @@ def pos(x: Int): {v: Int with v > 0} =
 
 <div class="fragment">
 
-In the [bound-checked merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/examples/11_merge_sort_bounds.scala), `head` and `tail` require a non-empty sequence (`SafeSeq[T] with a.len > 0`):
+In the [bound-checked merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/11_merge_sort_bounds.scala), `head` and `tail` require a non-empty sequence (`SafeSeq[T] with a.len > 0`):
 
 ```{.scala .small}
 def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
@@ -638,14 +638,14 @@ Install it with the [script](https://github.com/mbovel/scala-days-refinement-typ
 
 ```sh
 ./install.sh # Stainless 0.10.2, with z3 and cvc5, in .stainless/
-.stainless/stainless stainless/sum.scala
+.stainless/stainless stainless-examples/sum.scala
 ```
 
 </div>
 
 <div class="fragment">
 
-A fully verified [merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala): sorted, same size, same elements.
+A fully verified [merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-examples/merge_sort.scala): sorted, same size, same elements.
 
 </div>
 

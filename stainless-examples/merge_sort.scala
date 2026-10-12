@@ -10,7 +10,7 @@ import stainless.collection.{List, Cons, Nil, ListOps}
 import stainless.lang.Bag
 import stainless.annotation.ignore
 
-// Same structure as examples/11_merge_sort_bounds.scala, with full
+// Same structure as dotty-examples/11_merge_sort_bounds.scala, with full
 // specifications: the result is sorted, has the same size and the same
 // elements (as a multiset) as the input.
 

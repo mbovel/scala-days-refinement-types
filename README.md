@@ -8,15 +8,15 @@ Slides and examples for the Scala Days 2026 talk by Matt Bovel (EPFL).
 
 ## Examples
 
-[examples/](examples/) contains every example from the slides, plus a few more.
+[dotty-examples/](dotty-examples/) contains every example from the slides, plus a few more.
 Each file runs on its own with [Scala CLI](https://scala-cli.virtuslab.org/):
 
 ```sh
-scala --cli-version 1.18.0 run examples/02_fansi.scala
+scala --cli-version 1.18.0 run dotty-examples/02_fansi.scala
 ```
 
 Lines marked `// error` are commented out because they are expected not to
-compile; uncomment one to see the error message. `examples/check.sh` compiles
+compile; uncomment one to see the error message. `dotty-examples/check.sh` compiles
 every file and checks that each `// error` line indeed fails; CI runs it on
 every push.
 
@@ -38,14 +38,14 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 
 ## Verifying with Stainless
 
-[stainless/](stainless/) contains examples verified by
+[stainless-examples/](stainless-examples/) contains examples verified by
 [Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html), which
 checks refinement types with SMT solvers. `install.sh` installs a pinned
 Stainless release (with z3 and cvc5) into `.stainless/`:
 
 ```sh
 ./install.sh
-.stainless/stainless stainless/sum.scala stainless/merge_sort.scala
+.stainless/stainless stainless-examples/sum.scala stainless-examples/merge_sort.scala
 ```
 
 The files also compile with Scala CLI, in `silent` mode, once Stainless is

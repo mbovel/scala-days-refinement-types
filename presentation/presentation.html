@@ -395,7 +395,7 @@ bidirectional type-inference algorithm:</p>
   if x &gt; 0 then x else 1</code></pre>
 <div class="fragment">
 <p>In the <a
-href="https://github.com/mbovel/scala-days-refinement-types/blob/main/examples/11_merge_sort_bounds.scala">bound-checked
+href="https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/11_merge_sort_bounds.scala">bound-checked
 merge sort</a>, <code>head</code> and <code>tail</code> require a
 non-empty sequence (<code>SafeSeq[T] with a.len &gt; 0</code>):</p>
 <pre class="scala small"><code>def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
@@ -534,11 +534,11 @@ def abs(x: Int): {r: Int with r &gt;= 0} =
 href="https://github.com/mbovel/scala-days-refinement-types/blob/main/install.sh">script</a>
 from this talk’s repository:</p>
 <pre class="sh"><code>./install.sh # Stainless 0.10.2, with z3 and cvc5, in .stainless/
-.stainless/stainless stainless/sum.scala</code></pre>
+.stainless/stainless stainless-examples/sum.scala</code></pre>
 </div>
 <div class="fragment">
 <p>A fully verified <a
-href="https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala">merge
+href="https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-examples/merge_sort.scala">merge
 sort</a>: sorted, same size, same elements.</p>
 </div>
 </section>

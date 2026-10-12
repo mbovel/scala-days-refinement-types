@@ -18,7 +18,7 @@ jobs:
         with:
           scala-cli-version: 1.18.0
       - name: Check examples
-        run: ./examples/check.sh
+        run: ./dotty-examples/check.sh
         env:
           # `scalaOrganization` is a restricted directive in plain scala-cli.
           SCALA: scala-cli --power
@@ -43,6 +43,6 @@ jobs:
       - name: Install Stainless
         run: ./install.sh
       - name: Compile with Scala CLI
-        run: scala-cli --power compile stainless/
+        run: scala-cli --power compile stainless-examples/
       - name: Verify with Stainless
-        run: .stainless/stainless --compact stainless/*.scala
+        run: .stainless/stainless --compact stainless-examples/*.scala
