@@ -700,7 +700,7 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 <div class="fragment">
 
-**When the feature is unused**, the full Dotty CI passes unchanged: the compiler itself (≈200 000 LoC),<br/>≈10 000 tests, a 50-project community build.
+**When the feature is unused**, the full Dotty CI passes unchanged: the compiler itself (≈200 000 LoC), ≈10 000 tests, a 50-project community build.
 
 ≤ 4% slowdown on the official benchmark suite.
 
