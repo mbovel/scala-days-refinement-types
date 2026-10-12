@@ -737,21 +737,22 @@ Install it with the [script](https://github.com/mbovel/scala-days-refinement-typ
 
 ## Verifying with Stainless: merge sort
 
-Sorted, same size, same elements; all 110 checks verified, without `require` or `ensuring`:
+Sorted, same size, same elements; all 102 checks verified, without `require` or `ensuring`:
 
 ```{.scala .small}
-def merge(a: IList with a.isSorted, b: IList with b.isSorted): {res: IList with
-  res.isSorted && res.len == a.len + b.len && res.content == a.content ++ b.content
-} = ...
+def merge(left: List[BigInt] with left.isSorted, right: List[BigInt] with right.isSorted):
+  {res: List[BigInt] with
+    res.isSorted && res.size == left.size + right.size && res.bag == left.bag ++ right.bag
+  } =
+  if left.size > 0 && right.size > 0 then
+    if left.head < right.head then Cons(left.head, merge(left.tail, right))
+    else Cons(right.head, merge(left, right.tail))
+  else if left.size == 0 then right
+  else left
 
-def mergeSort(l: IList): {res: IList with
-  res.isSorted && res.len == l.len && res.content == l.content
-} =
-  val middle = safeDiv(l.len, BigInt(2))
-  if middle == 0 then l
-  else
-    val (left, right) = l.splitAt(middle)
-    merge(mergeSort(left), mergeSort(right))
+def mergeSort(list: List[BigInt]): {res: List[BigInt] with
+  res.isSorted && res.size == list.size && res.bag == list.bag
+} = ...
 ```
 
 <small>Full example: [stainless/merge_sort.scala](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala)</small>

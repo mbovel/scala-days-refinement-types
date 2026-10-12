@@ -6,8 +6,13 @@
 package stainlessmergesort
 
 import language.experimental.qualifiedTypes.silent // checked by Stainless instead
+import stainless.collection.{List, Cons, Nil, ListOps}
 import stainless.lang.Bag
 import stainless.annotation.ignore
+
+// Same structure as examples/15_merge_sort_bounds.scala, with full
+// specifications: the result is sorted, has the same size and the same
+// elements (as a multiset) as the input.
 
 type Pos = {x: BigInt with x >= 0}
 
@@ -16,52 +21,41 @@ type Pos = {x: BigInt with x >= 0}
 def safeDiv(x: Pos, y: Pos with y > 1): {res: Pos with res < x || x == 0} =
   x / y
 
-// Stainless does not support scala.List or Seq: we use our own list.
-enum IList:
-  case Nil
-  case Cons(head: Int, tail: IList)
-import IList.*
+extension (l: List[BigInt])
+  def isSorted: Boolean = ListOps.isSorted(l)
 
-extension (l: IList)
-  def len: Pos = l match
-    case Nil => BigInt(0)
-    case Cons(_, t) => t.len + 1
+  def bag: Bag[BigInt] = l match
+    case Nil() => Bag.empty[BigInt]
+    case Cons(h, t) => t.bag + h
 
-  def content: Bag[Int] = l match // multiset of elements
-    case Nil => Bag.empty[Int]
-    case Cons(h, t) => t.content + h
+  def divideAt(i: Pos with i <= l.size): {res: (List[BigInt], List[BigInt]) with
+    res._1.size == i && res._2.size == l.size - i && res._1.bag ++ res._2.bag == l.bag
+  } =
+    if i > 0 && l.size > 0 then
+      val (a, b) = l.tail.divideAt(i - 1)
+      (Cons(l.head, a), b)
+    else (Nil[BigInt](), l)
 
-  def isSorted: Boolean = l match
-    case Cons(x, t @ Cons(y, _)) => x <= y && t.isSorted
-    case _ => true
+def merge(left: List[BigInt] with left.isSorted, right: List[BigInt] with right.isSorted):
+  {res: List[BigInt] with
+    res.isSorted && res.size == left.size + right.size && res.bag == left.bag ++ right.bag
+  } =
+  if left.size > 0 && right.size > 0 then
+    if left.head < right.head then Cons(left.head, merge(left.tail, right))
+    else Cons(right.head, merge(left, right.tail))
+  else if left.size == 0 then right
+  else left
 
-  def splitAt(i: Pos with i <= l.len): {res: (IList, IList) with
-      res._1.len == i && res._2.len == l.len - i &&
-      res._1.content ++ res._2.content == l.content} =
-    l match
-      case Cons(h, t) if i > 0 =>
-        val (a, b) = t.splitAt(i - 1)
-        (Cons(h, a), b)
-      case _ => (Nil, l)
-
-def merge(a: IList with a.isSorted, b: IList with b.isSorted): {res: IList with
-  res.isSorted && res.len == a.len + b.len && res.content == a.content ++ b.content
+def mergeSort(list: List[BigInt]): {res: List[BigInt] with
+  res.isSorted && res.size == list.size && res.bag == list.bag
 } =
-  (a, b) match
-    case (Cons(x, xs), Cons(y, ys)) =>
-      if x <= y then Cons(x, merge(xs, b)) else Cons(y, merge(a, ys))
-    case (Nil, _) => b
-    case (_, Nil) => a
-
-def mergeSort(l: IList): {res: IList with
-  res.isSorted && res.len == l.len && res.content == l.content
-} =
-  val middle = safeDiv(l.len, BigInt(2))
-  if middle == 0 then l
+  val len = list.size
+  val middle = safeDiv(len, BigInt(2))
+  if middle == 0 then list
   else
-    val (left, right) = l.splitAt(middle)
+    val (left, right) = list.divideAt(middle)
     merge(mergeSort(left), mergeSort(right))
 
 @ignore @main def example =
-  println(mergeSort(Cons(5, Cons(3, Cons(8, Cons(1, Cons(2, Nil)))))))
-  println(mergeSort(Nil))
+  println(mergeSort(List[BigInt](5, 3, 8, 1, 2, 7, 4, 6)))
+  println(mergeSort(List[BigInt]()))

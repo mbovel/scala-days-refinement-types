@@ -26,19 +26,16 @@ object SafeSeqs:
 import SafeSeqs.*
 
 def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
-  (left, right) match
-    case (left: SafeSeq[T] with left.len > 0, right: SafeSeq[T] with right.len > 0) =>
-      if ord.lt(left.head, right.head) then SafeSeq(left.head) ++ merge(left.tail, right)
-      else SafeSeq(right.head) ++ merge(left, right.tail)
-    case _ =>
-      if left.len == 0 then right
-      else left
+  if left.len > 0 && right.len > 0 then
+    if ord.lt(left.head, right.head) then SafeSeq(left.head) ++ merge(left.tail, right)
+    else SafeSeq(right.head) ++ merge(left, right.tail)
+  else if left.len == 0 then right
+  else left
 
 def mergeSort[T: Ordering](list: SafeSeq[T]): SafeSeq[T] =
   val len = list.len
   val middle = safeDiv(len, 2)
-  if middle == 0 then
-    list
+  if middle == 0 then list
   else
     val (left, right) = list.splitAt(middle)
     merge(mergeSort(left), mergeSort(right))
