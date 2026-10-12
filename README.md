@@ -12,7 +12,7 @@ Slides and examples for the Scala Days 2026 talk by Matt Bovel (EPFL).
 Each file runs on its own with [Scala CLI](https://scala-cli.virtuslab.org/):
 
 ```sh
-scala --cli-version 1.18.0 run examples/2_fansi.scala
+scala --cli-version 1.18.0 run examples/02_fansi.scala
 ```
 
 Lines marked `// error` are commented out because they are expected not to

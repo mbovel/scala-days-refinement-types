@@ -8,7 +8,7 @@ import language.experimental.qualifiedTypes.runtimeChecks
 
 def getInt(): Int = 1
 
-@main def ex10 =
+@main def example =
   val x: {v: Int with v == 1} = getInt() // checked at run time: passes
   println(x)
   val y: {v: Int with v == 2} = getInt() // checked at run time: throws IllegalArgumentException

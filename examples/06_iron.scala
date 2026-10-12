@@ -20,7 +20,7 @@ given Constraint[List[Int], IsSorted] with
 def min(l: List[Int] :| IsSorted): Int =
   l.head
 
-@main def ex5 =
+@main def example =
   val l: List[Int] :| IsSorted = List(1, 2, 3).refineUnsafe
   println(min(l))
   println(List(3, 1, 2).refineEither[IsSorted])

@@ -6,7 +6,7 @@ package mergesortbounds
 
 type Pos = {x: Int with x >= 0}
 
-def safeDiv(x: Pos, y: Pos with y > 1): {res: Pos with res < x} =
+def safeDiv(x: Pos with x > 0, y: Pos with y > 1): {res: Pos with res < x} =
   (x / y).runtimeChecked
 
 object SafeSeqs:
@@ -34,13 +34,15 @@ def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
 
 def mergeSort[T: Ordering](list: SafeSeq[T]): SafeSeq[T] =
   val len = list.len
-  val middle = safeDiv(len, 2)
-  if middle == 0 then list
-  else
-    val (left, right) = list.splitAt(middle)
-    merge(mergeSort(left), mergeSort(right))
+  if len > 0 then
+    val middle = safeDiv(len, 2)
+    if middle == 0 then list
+    else
+      val (left, right) = list.splitAt(middle)
+      merge(mergeSort(left), mergeSort(right))
+  else list
 
-@main def ex15 =
+@main def example =
   val nums = SafeSeq(5, 3, 8, 1, 2, 7, 4, 6)
   val sortedNums = mergeSort(nums)
   println(s"Unsorted: $nums")
@@ -50,3 +52,5 @@ def mergeSort[T: Ordering](list: SafeSeq[T]): SafeSeq[T] =
   val sortedNums2 = mergeSort(nums2)
   println(s"Unsorted: $nums2")
   println(s"Sorted:   $sortedNums2")
+
+  println(s"Empty:    ${mergeSort(SafeSeq[Int]())}")

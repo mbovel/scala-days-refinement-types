@@ -22,7 +22,7 @@ type Pos = {x: Int with x >= 0}
 
 ## Syntax
 
-Long form, whith an explicit binder:
+Long form, with an explicit binder:
 
 ```scala
 type NonEmpty[A] = {l: List[A] with l.nonEmpty}
@@ -66,6 +66,7 @@ def concat[T](
 val xs: List[Int] = ???
 val ys: List[Int] = ???
 zip(concat(xs, ys), concat(ys, xs))
+zip(concat(xs, ys), concat(xs, xs)) // ⛔️
 ```
 
 ## whoami
@@ -117,7 +118,7 @@ def zip[A, B](
 
 <div class="fragment">
 
-1. **Runtime overhead**: assertions are checked at runtime, refinement types are checked at compiletime (by default).
+1. **Runtime overhead**: assertions are checked at runtime, refinement types are checked at compile time (by default).
 
 </div>
 
@@ -127,7 +128,7 @@ def zip[A, B](
 
 <div class="fragment">
 
-2. **No static guarantees**: assertions are only tested with the inputs you run them with. Refinements types hold _for all values_.
+2. **No static guarantees**: assertions are only tested with the inputs you run them with. Refinement types hold _for all values_.
 
 </div>
 
@@ -156,14 +157,15 @@ def zip[A, B](
 
 ## Example 2: Fansi
 
+From Li Haoyi's [Fansi](https://github.com/com-lihaoyi/fansi) library for colored terminal strings:
+
 <div class="columns">
 
 <div class="column">
 
 With assertions:
 
-```scala
-
+```{.scala .small}
 
 
 def True(r: Int, g: Int, b: Int) =
@@ -174,6 +176,8 @@ def trueIndex(r: Int, g: Int, b: Int) =
   require(0 <= g && g < 256)
   require(0 <= b && b < 256)
   r << 16 | g << 8 | b
+
+True(256, 0, 0) // 💥 at run time
 ```
 
 </div>
@@ -184,9 +188,8 @@ def trueIndex(r: Int, g: Int, b: Int) =
 
 With refinement types:
 
-```scala
-type Comp =
-  {v: Int with 0 <= v && v < 256}
+```{.scala .small}
+type Comp = {v: Int with 0 <= v && v < 256}
 
 def True(r: Comp, g: Comp, b: Comp) =
   True0(r, g, b, trueIndex(r, g, b))
@@ -197,6 +200,7 @@ def trueIndex(r: Comp, g: Comp, b: Comp) =
 
 
 
+True(256, 0, 0) // ⛔️ at compile time
 ```
 
 </div>
@@ -207,16 +211,18 @@ def trueIndex(r: Comp, g: Comp, b: Comp) =
 
 ## _first-class_?
 
-In our prototype, refinement tyes are ordinary Scala types, participating in inference, **overload resolution** (example 3), **subtyping** (example 4), etc.
+In our prototype, refinement types are ordinary Scala types, participating in inference, **overload resolution** (example 3), **subtyping** (example 4), etc.
 
 <div class="fragment">
 
-This is contrasting with other languages such as Liquid Haskell, where refinement types are implemented as a plugin that runs after type checking:
+In contrast, Liquid Haskell is a plugin that runs after type checking:
 
 ```haskell
 {-@ x :: {v:Int | v mod 2 == 0 } @-}
 let x = 42 :: Int in ...
 ```
+
+“It's sort of like you're doing two things at once [...] you're also talking to GHC, but you're also talking to LiquidHaskell.” <small>— a participant in [Usability Barriers for Liquid Types](https://dl.acm.org/doi/10.1145/3729327) (Gamboa et al., PLDI 2025)</small>
 
 </div>
 
@@ -239,7 +245,7 @@ def f[A](l: List[A] with l.notEmpty) = () // error
 ```
 
 ```text
--- [E008] Not Found Error: 6_error_messages.scala:9:27
+-- [E008] Not Found Error: 03_error_messages.scala:9:27
 9 |def f[A](l: List[A] with l.notEmpty) = () // error
   |                         ^^^^^^^^^^
   |      value notEmpty is not a member of List[A] - did you mean l.nonEmpty?
@@ -256,7 +262,7 @@ g((x: PosInt) => x * 2, -2) // error
 ```
 
 ```text
--- [E007] Type Mismatch Error: 6_error_messages.scala:17:26
+-- [E007] Type Mismatch Error: 03_error_messages.scala:17:26
 17 |  g((x: PosInt) => x * 2, -2) // error
    |                          ^^
    |                          Found:    (-2 : Int)
@@ -298,54 +304,6 @@ def maximum[T: Ord, U <: T](xs: List[U]): U =
 
 </div>
 
-## Refinement types vs. existings constructs
-
-<div class="columns">
-<div class="column">
-
-<div class="column fragment">
-
-Scala already have _structural refined types_:
-
-```scala
-def zip[A, B](
-  as: List[A],
-  bs: List[B] {
-    val size: as.size.type
-  }
-): List[(A, B)] {
-  val size: as.size.type
-}
-```
-
-</div>
-
-</div>
-
-<div class="column">
-
-<div class="fragment">
-
-And singleton types, and opaque types, and compiletime operations:
-
-```scala
-opaque type SizedList[
-  X <: Int: Singleton,
-  A
-] <: List[A]
-
-def zip[A, B, Size <: Int: Singleton](
-  as: SizedList[Size A],
-  bs: SizedList[Size, B]
-): SizedList[Size, (A, B)]
-```
-
-</div>
-
-</div>
-
-</div> <!-- .columns -->
-
 ## Refinement types vs. libraries
 
 With [Iron](https://github.com/Iltotore/iron), predicates are defined as type-level constraints:
@@ -377,19 +335,25 @@ Existing constructs (structural refinements, singleton types, compile-time opera
 
 <div class="fragment">
 
-- _Limited reasoning_: only fields, literals, constant folding, etc.
+1. **Limited reasoning**: only fields, literals, constant folding, etc.
 
 </div>
 
 <div class="fragment">
 
-- _Not inferred_: types must be annotated manually, or programs are not typable at all.
+2. **Not inferred**: types must be annotated manually, or programs are not typable at all.
 
 </div>
 
 <div class="fragment">
 
-- _Different languages_: predicates are written at the type level (`IsSorted`, `as.size.type`), not at the term level (`isSorted`, `as.size`).
+3. **Different languages**: predicates are written at the type level (`IsSorted`, `as.size.type`), not at the term level (`isSorted`, `as.size`).
+
+</div>
+
+<div class="fragment">
+
+4. **Manual reflection**: each term-level method must be reflected at the type level by hand, like `isSorted` as `IsSorted` and its `Constraint`.
 
 </div>
 
@@ -419,12 +383,6 @@ The predicate language is restricted to a fragment of Scala consisting of consta
 
 </div>
 
-<div class="fragment">
-
-Purity of functions is currently not enforced. Should it be?
-
-</div>
-
 ## Purity of predicates
 
 By default, functions called in predicates are _assumed_ to be pure:
@@ -438,7 +396,7 @@ def test(c: Cell) =
 
 <div class="fragment">
 
-With [capture](https://docs.scala-lang.org/scala3/reference/experimental/cc.html) and separation checking, predicates are required to be pure:
+With [capture](https://docs.scala-lang.org/scala3/reference/experimental/cc.html) and [separation checking](https://docs.scala-lang.org/scala3/reference/experimental/capture-checking/mutability.html), predicates are required to be pure:
 
 ```scala
 import language.experimental.{captureChecking, separationChecking}
@@ -450,7 +408,7 @@ def test(c: Cell^) =
 
 </div>
 
-## Mixed-precision type inference
+## When are refinements inferred?
 
 <div class="columns">
 
@@ -475,14 +433,19 @@ Why not always infer the precise type?
 
 <div class="column">
 
-<div class="fragment" data-fragment-index="1">
+<div class="fragment" data-fragment-index="2">
 
 2. **Performance:** bigger types, slower comparisons.
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
 3. **Developer eXperience:** users would be flooded with complex types.
 
 </div>
 
-<div class="fragment" data-fragment-index="2">
+<div class="fragment" data-fragment-index="4">
 
 Instead, precision is recovered **on demand**, by a standard mechanism called _selfification_, triggered by the bidirectional type-inference algorithm:
 
@@ -496,6 +459,29 @@ val x: (Int with x == 42) = 42
 
 </div>
 
+## Flow-sensitive typing
+
+The condition of an `if` is assumed in its branches:
+
+```scala
+def pos(x: Int): {v: Int with v > 0} =
+  if x > 0 then x else 1
+```
+
+<div class="fragment">
+
+In the [bound-checked merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/examples/11_merge_sort_bounds.scala), `head` and `tail` require a non-empty sequence (`SafeSeq[T] with a.len > 0`):
+
+```{.scala .small}
+def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
+  if left.len > 0 && right.len > 0 then
+    if ord.lt(left.head, right.head) then SafeSeq(left.head) ++ merge(left.tail, right)
+    else SafeSeq(right.head) ++ merge(left, right.tail)
+  else if left.len == 0 then right
+  else left
+```
+
+</div>
 
 ## Solver
 
@@ -561,87 +547,6 @@ Also beta-reduction, ADT selections reductions and limited reasoning on LIA ineq
 
 </div>
 
-## Subtyping: Constant folding
-
-```scala
-{v: Int with v == 1 + 1}     <: {v: Int with v == 2}
-```
-
-## Subtyping: Normalization
-
-Arithmetic expressions are normalized using standard algebraic properties, for example commutativity of addition:
-
-```scala
-{v: Int with v == x + 1}     <: {v: Int with v == 1 + x}
-```
-
-<div class="fragment">
-
-```scala
-{v: Int with v == y + x}     <: {v: Int with v == x + y}
-```
-
-</div>
-
-<div class="fragment">
-
-Or grouping operands with the same constant factor in sums of products:
-
-```scala
-{v: Int with v == x + 3 * y} <: {v: Int with v == 2 * y + (x + y)}
-```
-
-</div>
-
-## Subtyping: Local unfolding
-
-As mentioned, refinement types are not inferred from terms by default. However, the solver can unfold definitions of local `val` (only), even when they have an imprecise type:
-
-```scala
-val x: Int = ...
-val y: Int = x + 1
-
-{v: Int with v == y} =:= {v: Int with v == x + 1}
-```
-
-## Subtyping: Equality reasoning
-
-Transitivity of equality:
-
-```scala
-{v: Int with v == a && a == b} <: {v: Int with v == b}
-```
-
-<div class="fragment">
-
-Congruence of equality:
-
-```scala
-{v: Int with a == b}           <: {v: Int with f(a) == f(b)}
-```
-
-</div>
-
-<div class="fragment">
-
-This is implemented using an E-Graph-like data structure.
-
-</div>
-
-## Subtyping: With other Scala types
-
-Literal types are subtypes of singleton refinement types:
-
-```scala
-3 <: {v: Int with v == 3}
-```
-
-<div class="fragment">
-
-We plan to support subtyping with other Scala types in the future.
-
-</div>
-
 ## Run-time checks
 
 **Pattern matching** branches on whether the predicate holds at run time:
@@ -675,7 +580,7 @@ val id: ID =
 
 </div>
 
-<div class="fragment" style="font-size: 0.8em;">
+<div class="fragment">
 
 Note: like with other types, you can also use `.asInstanceOf[ID]` directly to skip the check altogether.
 
@@ -683,7 +588,7 @@ Note: like with other types, you can also use `.asInstanceOf[ID]` directly to sk
 
 <div class="fragment">
 
-`.runtimeChecked` for refinement types was implemented by Valentin Schneeberger.
+`.runtimeChecked` for refinement types was implemented by [Valentin Schneeberger](https://www.linkedin.com/in/valentin-schneeberger-b46b77271/).
 
 </div>
 
@@ -704,6 +609,8 @@ A language import turns these errors into something else:
 import language.experimental.qualifiedTypes.runtimeChecks // or warn, or silent
 ```
 
+<div style="margin-top: 1.5em;">
+
 | Mode | Unverified refinement becomes |
 |---|---|
 | `runtimeChecks` | run-time check, throws if it fails |
@@ -712,14 +619,15 @@ import language.experimental.qualifiedTypes.runtimeChecks // or warn, or silent
 
 </div>
 
+</div>
+
 ## Verifying with Stainless
 
-[Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html) compiles in `silent` mode, then verifies refinements itself with SMT solvers:
+The [Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html) verifier can use Dotty's refinement types (support implemented by [Kasia Marek](https://www.linkedin.com/in/kasiamarek/))! It compiles in `silent` mode, then verifies refinements itself with SMT solvers:
 
 ```scala
 def sum(n: BigInt with n >= 0): {r: BigInt with 2 * r == n * (n + 1)} =
   if n == 0 then BigInt(0) else n + sum(n - 1) // ✅ verified
-
 def abs(x: Int): {r: Int with r >= 0} =
   if x >= 0 then x else -x // ⛔️ counter-example: x = -2147483648
 ```
@@ -735,27 +643,11 @@ Install it with the [script](https://github.com/mbovel/scala-days-refinement-typ
 
 </div>
 
-## Verifying with Stainless: merge sort
+<div class="fragment">
 
-Sorted, same size, same elements; all 102 checks verified, without `require` or `ensuring`:
+A fully verified [merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala): sorted, same size, same elements.
 
-```{.scala .small}
-def merge(left: List[BigInt] with left.isSorted, right: List[BigInt] with right.isSorted):
-  {res: List[BigInt] with
-    res.isSorted && res.size == left.size + right.size && res.bag == left.bag ++ right.bag
-  } =
-  if left.size > 0 && right.size > 0 then
-    if left.head < right.head then Cons(left.head, merge(left.tail, right))
-    else Cons(right.head, merge(left, right.tail))
-  else if left.size == 0 then right
-  else left
-
-def mergeSort(list: List[BigInt]): {res: List[BigInt] with
-  res.isSorted && res.size == list.size && res.bag == list.bag
-} = ...
-```
-
-<small>Full example: [stainless/merge_sort.scala](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala)</small>
+</div>
 
 ## Example 5: Memoized Fibonacci
 
@@ -798,10 +690,6 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 ## Evaluation
 
-<div class="columns">
-
-<div class="column">
-
 **Compilation overhead**, against each system's own unchecked baseline:
 
 | System | Overhead |
@@ -818,24 +706,7 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 </div>
 
-
-</div>
-
-<div class="column">
-
-
-
-</div>
-
-</div>
-
 ## Future work
-
-<div class="columns">
-
-<div class="column">
-
-Implementation:
 
 - **Better Solver** for what our lightweight solver cannot do.
 
@@ -847,22 +718,6 @@ Implementation:
     type Range(from: Int, to: Int) =
       {v: Int with v >= from && v < to}
 ```
-
-</div>
-
-<div class="column">
-
-Theory:
-
-- **Rules for semantic implication.** We leave implication purely semantic; the solver's normalization rules are not yet verified against it.
-
-- **Enforcing purity by default.** Today a function called in a predicate is *assumed* pure, unless capture and separation checking are enabled.
-
-- **Classes and objects**, absent from the presented core calculus.
-
-</div>
-
-</div>
 
 ## How to use
 
@@ -896,24 +751,22 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 
 <div class="columns">
 
-<div class="column" style="flex: 1.5;">
+<div class="column qr-codes">
 
-We showed:
+<figure>
+<a href="https://mbovel.github.io/scala-days-refinement-types/presentation/presentation.html"><img src="./qr-code-presentation.svg" alt="QR code to the slides" /></a>
+<figcaption><a href="https://mbovel.github.io/scala-days-refinement-types/presentation/presentation.html">Slides</a></figcaption>
+</figure>
 
-1. A **prototype implementation** of refinement types in Scala 3 as _first-class_ types; normal Scala types that participate in subtyping, inference, overloads resolution and pattern matching.
+<figure>
+<a href="https://matt.bovel.net/scala-refinement-types"><img src="./qr-code-paper.svg" alt="QR code to the paper" /></a>
+<figcaption><a href="https://matt.bovel.net/scala-refinement-types">Paper</a></figcaption>
+</figure>
 
-2. A core **calculus** proven sound in Rocq by semantic typing. It includes refinements, dependent functions and pairs, sums, unions, intersections and equi-recursive positive types, and allows predicates to diverge.
-
-</div>
-
-<div class="column" style="margin-left: 1.2em;">
-
-Slides and paper:
-
-<div style="width: 100%;">
-<img src="./qr-code.svg" style="margin: -4.25%; width: 108.5%;" />
-<small><a href="https://matt.bovel.net/scala-refinement-types/">matt.bovel.net/scala-refinement-types/</a></small>
-</div>
+<figure>
+<a href="https://matt.bovel.net/scala-refinement-types/playground/"><img src="./qr-code-playground.svg" alt="QR code to the playground" /></a>
+<figcaption><a href="https://matt.bovel.net/scala-refinement-types/playground/">Playground</a></figcaption>
+</figure>
 
 </div>
 
@@ -929,6 +782,124 @@ Slides and paper:
 </div>
 
 # Bonus slides
+
+## Refinement types vs. existing constructs
+
+<div class="columns">
+<div class="column">
+
+<div class="column fragment">
+
+Scala already has _structural refined types_:
+
+```scala
+def zip[A, B](
+  as: List[A],
+  bs: List[B] {
+    val size: as.size.type
+  }
+): List[(A, B)] {
+  val size: as.size.type
+}
+```
+
+</div>
+
+</div>
+
+<div class="column">
+
+<div class="fragment">
+
+And singleton types, and opaque types, and compiletime operations:
+
+```scala
+opaque type SizedList[
+  X <: Int: Singleton,
+  A
+] <: List[A]
+
+def zip[A, B, Size <: Int: Singleton](
+  as: SizedList[Size, A],
+  bs: SizedList[Size, B]
+): SizedList[Size, (A, B)]
+```
+
+</div>
+
+</div>
+
+</div> <!-- .columns -->
+
+## Subtyping: Constant folding
+
+```scala
+{v: Int with v == 1 + 1}     <: {v: Int with v == 2}
+```
+
+## Subtyping: Normalization
+
+Arithmetic expressions are normalized using standard algebraic properties, for example commutativity of addition:
+
+```scala
+{v: Int with v == x + 1}     <: {v: Int with v == 1 + x}
+```
+
+<div class="fragment">
+
+```scala
+{v: Int with v == y + x}     <: {v: Int with v == x + y}
+```
+
+</div>
+
+<div class="fragment">
+
+Or grouping operands with the same constant factor in sums of products:
+
+```scala
+{v: Int with v == x + 3 * y} <: {v: Int with v == 2 * y + (x + y)}
+```
+
+</div>
+
+## Subtyping: Equality reasoning
+
+Transitivity of equality:
+
+```scala
+{v: Int with v == a && a == b} <: {v: Int with v == b}
+```
+
+<div class="fragment">
+
+Congruence of equality:
+
+```scala
+{v: Int with a == b}           <: {v: Int with f(a) == f(b)}
+```
+
+</div>
+
+<div class="fragment">
+
+This is implemented using an E-Graph-like data structure.
+
+</div>
+
+## Subtyping: With other Scala types
+
+Literal types are subtypes of singleton refinement types:
+
+```scala
+3 <: {v: Int with v == 3}
+```
+
+<div class="fragment">
+
+We plan to support subtyping with other Scala types in the future.
+
+</div>
 
 ## Backup: LH Usability Barriers
 
@@ -959,38 +930,5 @@ type Pos = { v: Int with v >= 0 }
 val xs = List(-1,2,-2,1)
 xs.collect { case x: Pos => x } : List[Pos]
 ```
-
-</div>
-
-
-## Backup: Value interpretation (more)
-
-<div class="fragment">
-
-Value interpretation of **function types**:
-
-$$
-\begin{aligned}
-\mathcal{V}\llbracket \Pi x{:}A.\, B \rrbracket_{\delta}^{\rho}(v) \triangleq\ & \exists \rho_f, b.\; v = \langle \rho_f, \lambda x.\, b \rangle\ \land \\
-  & \forall v_a.\; \mathcal{V}\llbracket A \rrbracket_{\delta}^{\rho}(v_a) \implies \mathcal{E}\llbracket B \rrbracket_{\delta}^{\rho_f[x \mapsto v_a]}(b)
-\end{aligned}
-$$
-
-</div>
-
-
-<div class="fragment">
-
-Value interpretation of **recursive types**?
-
-$$\textcolor{red}{\mathcal{V}\llbracket \mu X.\, A \rrbracket_{\delta}^{\rho}(v) \triangleq \mathcal{V}\llbracket A \rrbracket_{\delta[X \mapsto \mathcal{V}\llbracket \mu X.\, A \rrbracket_{\delta}^{\rho}]}^{\rho}(v)}$$
-
-</div>
-
-<div class="fragment">
-
-$$\mathcal{V}\llbracket \mu X.\, A \rrbracket_{\delta}^{\rho}(v) \triangleq \forall n.\; F^n(v)$$
-
-$$F^0(v) = \top,\quad F^{n+1}(v) = \mathcal{V}\llbracket A \rrbracket_{\delta[X \mapsto F^n]}^{\rho}(v)$$
 
 </div>

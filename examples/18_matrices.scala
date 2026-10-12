@@ -68,7 +68,7 @@ def example3(w: Pos, h: Pos) =
   m1T.mul(m1)
 
 
-@main def ex14 =
+@main def example =
   val m = Matrix(2, 3)
   m(0, 1) = 1.0
   println(m.transpose()(1, 0))

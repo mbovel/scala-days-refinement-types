@@ -8,7 +8,7 @@ import language.experimental.qualifiedTypes.warn
 
 def getInt(): Int = 1
 
-@main def ex11 =
+@main def example =
   val x: {v: Int with v == 1} = getInt() // warning: cannot be verified statically
   println(x)
   val y: {v: Int with v == 2} = getInt() // warning, and no run-time check: y is 1!

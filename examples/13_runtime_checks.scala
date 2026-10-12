@@ -7,7 +7,7 @@ package runtimechecks
 val idRegex = "[0-9a-f]{4}-[0-9a-f]{4}"
 type ID = {s: String with s.matches(idRegex)}
 
-@main def ex9 =
+@main def example =
   // Pattern matching
   "a2e7-e89b" match
     case id: ID => println(s"$id is an ID") // holds, id has type ID

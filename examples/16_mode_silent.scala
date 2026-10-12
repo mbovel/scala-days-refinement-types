@@ -8,7 +8,7 @@ import language.experimental.qualifiedTypes.silent
 
 def getInt(): Int = 1
 
-@main def ex12 =
+@main def example =
   val x: {v: Int with v == 1} = getInt() // accepted silently
   println(x)
   val y: {v: Int with v == 2} = getInt() // accepted silently, no run-time check: y is 1!
