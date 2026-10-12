@@ -238,8 +238,10 @@ code {
 }
 
 .paper {
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 16px rgba(256, 256, 100, 0.5);
     border-radius: 6px;
+    width: 100%;
+    height: auto;
 }
 
 .reveal .progress {

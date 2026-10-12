@@ -36,6 +36,21 @@ scalaVersion := "3.10.1-RC1-bin-20260903-e1f9361-NIGHTLY"
 scalacOptions += "-language:experimental.qualifiedTypes"
 ```
 
+## Verifying with Stainless
+
+[stainless/](stainless/) contains examples verified by
+[Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html), which
+checks refinement types with SMT solvers. `install.sh` installs a pinned
+Stainless release (with z3 and cvc5) into `.stainless/`:
+
+```sh
+./install.sh
+.stainless/stainless stainless/sum.scala stainless/merge_sort.scala
+```
+
+The files also compile with Scala CLI, in `silent` mode, once Stainless is
+installed (`merge_sort.scala` uses the Stainless library from `.stainless/`).
+
 ## Building the slides
 
 The slides are written in [presentation/presentation.md](presentation/presentation.md).

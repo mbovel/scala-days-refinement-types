@@ -8,5 +8,6 @@
 .vscode/
 target/
 
-# Local Stainless installation (see install.sh)
+# Local Stainless installation (see install.sh) and its cache
 .stainless/
+.stainless-cache/

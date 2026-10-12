@@ -712,6 +712,50 @@ import language.experimental.qualifiedTypes.runtimeChecks // or warn, or silent
 
 </div>
 
+## Verifying with Stainless
+
+[Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html) compiles in `silent` mode, then verifies refinements itself with SMT solvers:
+
+```scala
+def sum(n: BigInt with n >= 0): {r: BigInt with 2 * r == n * (n + 1)} =
+  if n == 0 then BigInt(0) else n + sum(n - 1) // ✅ verified
+
+def abs(x: Int): {r: Int with r >= 0} =
+  if x >= 0 then x else -x // ⛔️ counter-example: x = -2147483648
+```
+
+<div class="fragment">
+
+Install it with the [script](https://github.com/mbovel/scala-days-refinement-types/blob/main/install.sh) from this talk's repository:
+
+```sh
+./install.sh # Stainless 0.10.2, with z3 and cvc5, in .stainless/
+.stainless/stainless stainless/sum.scala
+```
+
+</div>
+
+## Verifying with Stainless: merge sort
+
+Sorted, same size, same elements; all 110 checks verified, without `require` or `ensuring`:
+
+```{.scala .small}
+def merge(a: IList with a.isSorted, b: IList with b.isSorted): {res: IList with
+  res.isSorted && res.len == a.len + b.len && res.content == a.content ++ b.content
+} = ...
+
+def mergeSort(l: IList): {res: IList with
+  res.isSorted && res.len == l.len && res.content == l.content
+} =
+  val middle = safeDiv(l.len, BigInt(2))
+  if middle == 0 then l
+  else
+    val (left, right) = l.splitAt(middle)
+    merge(mergeSort(left), mergeSort(right))
+```
+
+<small>Full example: [stainless/merge_sort.scala](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala)</small>
+
 ## Example 5: Memoized Fibonacci
 
 A map whose values are related to their keys by a predicate `p`:

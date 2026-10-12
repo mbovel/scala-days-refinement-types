@@ -575,6 +575,44 @@ val x: {v: Int with v == 1} = getInt() // ⛔️ type error</code></pre>
 </table>
 </div>
 </section>
+<section id="verifying-with-stainless" class="slide level2">
+<h2>Verifying with Stainless</h2>
+<p><a
+href="https://epfl-lara.github.io/stainless/refinementtypes.html">Stainless</a>
+compiles in <code>silent</code> mode, then verifies refinements itself
+with SMT solvers:</p>
+<pre class="scala"><code>def sum(n: BigInt with n &gt;= 0): {r: BigInt with 2 * r == n * (n + 1)} =
+  if n == 0 then BigInt(0) else n + sum(n - 1) // ✅ verified
+
+def abs(x: Int): {r: Int with r &gt;= 0} =
+  if x &gt;= 0 then x else -x // ⛔️ counter-example: x = -2147483648</code></pre>
+<div class="fragment">
+<p>Install it with the <a
+href="https://github.com/mbovel/scala-days-refinement-types/blob/main/install.sh">script</a>
+from this talk’s repository:</p>
+<pre class="sh"><code>./install.sh # Stainless 0.10.2, with z3 and cvc5, in .stainless/
+.stainless/stainless stainless/sum.scala</code></pre>
+</div>
+</section>
+<section id="verifying-with-stainless-merge-sort" class="slide level2">
+<h2>Verifying with Stainless: merge sort</h2>
+<p>Sorted, same size, same elements; all 110 checks verified, without
+<code>require</code> or <code>ensuring</code>:</p>
+<pre class="scala small"><code>def merge(a: IList with a.isSorted, b: IList with b.isSorted): {res: IList with
+  res.isSorted &amp;&amp; res.len == a.len + b.len &amp;&amp; res.content == a.content ++ b.content
+} = ...
+
+def mergeSort(l: IList): {res: IList with
+  res.isSorted &amp;&amp; res.len == l.len &amp;&amp; res.content == l.content
+} =
+  val middle = safeDiv(l.len, BigInt(2))
+  if middle == 0 then l
+  else
+    val (left, right) = l.splitAt(middle)
+    merge(mergeSort(left), mergeSort(right))</code></pre>
+<p><small>Full example: <a
+href="https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless/merge_sort.scala">stainless/merge_sort.scala</a></small></p>
+</section>
 <section id="example-5-memoized-fibonacci" class="slide level2">
 <h2>Example 5: Memoized Fibonacci</h2>
 <p>A map whose values are related to their keys by a predicate

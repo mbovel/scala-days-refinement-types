@@ -6,7 +6,7 @@ on:
 
 jobs:
   examples:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -22,3 +22,27 @@ jobs:
         env:
           # `scalaOrganization` is a restricted directive in plain scala-cli.
           SCALA: scala-cli --power
+
+  stainless:
+    # Stainless' bundled z3 needs glibc 2.39 (Ubuntu 24.04).
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: coursier/cache-action@v6
+      - uses: VirtusLab/scala-cli-setup@v1
+        with:
+          scala-cli-version: 1.18.0
+      - uses: actions/cache@v4
+        with:
+          path: .stainless
+          key: stainless-${{ hashFiles('install.sh') }}
+      - name: Install Stainless
+        run: ./install.sh
+      - name: Compile with Scala CLI
+        run: scala-cli --power compile stainless/
+      - name: Verify with Stainless
+        run: .stainless/stainless --compact stainless/*.scala
