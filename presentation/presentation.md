@@ -272,6 +272,10 @@ g((x: PosInt) => x * 2, -2) // error
 ## Example 3: Overload resolution
 
 ```scala
+extension (l: List[Int]) def isSorted: Boolean =
+  l.zip(l.drop(1)).forall((x, y) => x <= y)
+
+@targetName("minSorted")
 def min(l: List[Int] with l.isSorted) =
   l.head // O(1)
 
@@ -298,6 +302,9 @@ def ex2: Even =
 <div class="fragment">
 
 ```scala
+def max[T: Ord as ord, U <: T](x: U, y: U): U =
+  if ord.compare(x, y) >= 0 then x else y
+
 def maximum[T: Ord, U <: T](xs: List[U]): U =
   xs.reduce(max)
 ```
@@ -645,7 +652,7 @@ Install it with the [script](https://github.com/mbovel/scala-days-refinement-typ
 
 <div class="fragment">
 
-A fully verified [merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-examples/merge_sort.scala): sorted, same size, same elements.
+See also: a verified [merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-examples/merge_sort.scala): sorted, same size, same elements.
 
 </div>
 
@@ -707,6 +714,8 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 </div>
 
 ## Future work
+
+- **Pre-SIP and SIP** to make refinement types part of Scala.
 
 - **Better Solver** for what our lightweight solver cannot do.
 

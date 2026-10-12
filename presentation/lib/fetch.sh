@@ -6,6 +6,7 @@ set -euo pipefail
 REVEAL_VERSION=5.2.1
 KATEX_VERSION=0.18.7
 HLJS_VERSION=11.9.0
+INTER_VERSION=4.1.1
 
 OUT="$(cd "$(dirname "$0")" && pwd)"
 TMP="$(mktemp -d)"
@@ -20,10 +21,11 @@ fetch() { # fetch <npm-path> <dir>
 fetch "reveal.js/-/reveal.js-$REVEAL_VERSION.tgz" reveal
 fetch "katex/-/katex-$KATEX_VERSION.tgz" katex
 fetch "@highlightjs/cdn-assets/-/cdn-assets-$HLJS_VERSION.tgz" hljs
+fetch "inter-ui/-/inter-ui-$INTER_VERSION.tgz" inter
 
-rm -rf "$OUT/reveal.js" "$OUT/katex" "$OUT/highlight.js"
+rm -rf "$OUT/reveal.js" "$OUT/katex" "$OUT/highlight.js" "$OUT/inter"
 mkdir -p "$OUT/reveal.js/dist/theme" "$OUT/katex/fonts" \
-         "$OUT/highlight.js/languages" "$OUT/highlight.js/styles"
+         "$OUT/highlight.js/languages" "$OUT/highlight.js/styles" "$OUT/inter/variable"
 
 # reveal.js: core, every theme, theme fonts in .woff only.
 cp "$TMP"/reveal/dist/{reset.css,reveal.css,reveal.js} "$OUT/reveal.js/dist/"
@@ -47,7 +49,15 @@ cp "$TMP/katex/LICENSE" "$OUT/katex/LICENSE"
 # highlight.js: browser bundle plus the grammars these decks use.
 cp "$TMP/hljs/highlight.min.js" "$OUT/highlight.js/"
 cp "$TMP"/hljs/languages/{scala,haskell}.min.js "$OUT/highlight.js/languages/"
+# Highlight `opaque` as a keyword: 11.9.0's Scala grammar lacks it.
+perl -pi -e 's/given transparent"/given transparent opaque"/' "$OUT/highlight.js/languages/scala.min.js"
+printf '\n' >> "$OUT/highlight.js/languages/scala.min.js"
 cp "$TMP"/hljs/styles/atom-one-light.min.css "$OUT/highlight.js/styles/"
 cp "$TMP/hljs/LICENSE" "$OUT/highlight.js/LICENSE"
 
-echo "Vendored into $OUT: reveal.js $REVEAL_VERSION, KaTeX $KATEX_VERSION, highlight.js $HLJS_VERSION"
+# Inter: the variable font only (the decks' main font, `InterVariable`).
+cp "$TMP/inter/inter-variable.css" "$OUT/inter/"
+cp "$TMP"/inter/variable/{InterVariable.woff2,InterVariable-Italic.woff2} "$OUT/inter/variable/"
+cp "$TMP/inter/LICENSE.txt" "$OUT/inter/LICENSE.txt"
+
+echo "Vendored into $OUT: reveal.js $REVEAL_VERSION, KaTeX $KATEX_VERSION, highlight.js $HLJS_VERSION, Inter $INTER_VERSION"

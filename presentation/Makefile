@@ -21,7 +21,7 @@ all: presentation.html presentation.pdf
 		-V height="675" \
 		-V margin="0.1" \
 		-V transition="none" \
-		-V header-includes='<link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link rel="stylesheet" href="custom.css" />' \
+		-V header-includes='<link rel="stylesheet" href="lib/inter/inter-variable.css"><link rel="stylesheet" href="custom.css" />' \
 		-V include-after='<script src="lib/highlight.js/highlight.min.js"></script><script src="lib/highlight.js/languages/scala.min.js"></script><script src="lib/highlight.js/languages/haskell.min.js"></script><script src="highlightjs-coq.js"></script><script>hljs.highlightAll();</script>' \
 		-V history="true" \
 		-V navigationMode="linear" \

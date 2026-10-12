@@ -7,8 +7,8 @@ package boundedpoly
 trait Ord[T]:
   def compare(x: T, y: T): Int
 
-def max[T: Ord, U <: T](x: U, y: U): U =
-  if summon[Ord[T]].compare(x, y) >= 0 then x else y
+def max[T: Ord as ord, U <: T](x: U, y: U): U =
+  if ord.compare(x, y) >= 0 then x else y
 
 def maximum[T: Ord, U <: T](xs: List[U]): U =
   xs.reduce(max)

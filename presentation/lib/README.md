@@ -10,6 +10,7 @@ one level up would be invisible to the PDF export.
 | reveal.js      | 5.2.1   | `npm:reveal.js` (pandoc's revealjs template default is `^5`) |
 | KaTeX          | 0.18.7  | `npm:katex` (pandoc's `--katex` default is `@latest`) |
 | highlight.js   | 11.9.0  | `npm:@highlightjs/cdn-assets` (same files cdnjs serves) |
+| Inter          | 4.1.1   | `npm:inter-ui` (variable font only: the decks' main font) |
 
 Trimmed to what a current browser actually fetches. Every `@font-face` here
 resolves locally to its first usable entry: KaTeX ships `.woff2` and `.woff`,
@@ -17,7 +18,8 @@ reveal.js theme fonts ship `.woff`. The formats behind those (`.ttf`, and the
 IE-only `.eot`) are left out — nothing that can run reveal.js 5 falls through
 to them. Also omitted: source maps, ES-module builds, and every highlight.js
 grammar except Scala and Haskell. Coq highlighting is the deck's own
-`highlightjs-coq.js`.
+`highlightjs-coq.js`. The Scala grammar is patched to highlight `opaque`
+(`fetch.sh` reapplies the patch).
 
 reveal.js's own `white` theme (what both decks use) is fully local. Eight of
 the other bundled themes — beige, blood, league, moon, night, simple, sky,

@@ -34,7 +34,7 @@
   </style>
   <link rel="stylesheet" href="lib/reveal.js/dist/theme/white.css" id="theme">
   <link rel="stylesheet" href="lib/highlight.js/styles/atom-one-light.min.css">
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link rel="stylesheet" href="custom.css" />
+  <link rel="stylesheet" href="lib/inter/inter-variable.css"><link rel="stylesheet" href="custom.css" />
 </head>
 <body>
   <div class="reveal">
@@ -237,7 +237,11 @@ g((x: PosInt) =&gt; x * 2, -2) // error</code></pre>
 </section>
 <section id="example-3-overload-resolution" class="slide level2">
 <h2>Example 3: Overload resolution</h2>
-<pre class="scala"><code>def min(l: List[Int] with l.isSorted) =
+<pre class="scala"><code>extension (l: List[Int]) def isSorted: Boolean =
+  l.zip(l.drop(1)).forall((x, y) =&gt; x &lt;= y)
+
+@targetName(&quot;minSorted&quot;)
+def min(l: List[Int] with l.isSorted) =
   l.head // O(1)
 
 def min(l: List[Int]) =
@@ -260,7 +264,10 @@ type Even = {v: Int with v % 2 == 0}
 def ex2: Even =
   maximum(List(2, 4, 6))</code></pre>
 <div class="fragment">
-<pre class="scala"><code>def maximum[T: Ord, U &lt;: T](xs: List[U]): U =
+<pre class="scala"><code>def max[T: Ord as ord, U &lt;: T](x: U, y: U): U =
+  if ord.compare(x, y) &gt;= 0 then x else y
+
+def maximum[T: Ord, U &lt;: T](xs: List[U]): U =
   xs.reduce(max)</code></pre>
 </div>
 </section>
@@ -537,7 +544,7 @@ from this talk’s repository:</p>
 .stainless/stainless stainless-examples/sum.scala</code></pre>
 </div>
 <div class="fragment">
-<p>A fully verified <a
+<p>See also: a verified <a
 href="https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-examples/merge_sort.scala">merge
 sort</a>: sorted, same size, same elements.</p>
 </div>
@@ -606,6 +613,8 @@ unchanged: the compiler itself (≈200 000 LoC), ≈10 000 tests, a
 <section id="future-work" class="slide level2">
 <h2>Future work</h2>
 <ul>
+<li><p><strong>Pre-SIP and SIP</strong> to make refinement types part of
+Scala.</p></li>
 <li><p><strong>Better Solver</strong> for what our lightweight solver
 cannot do.</p></li>
 <li><p><strong>A termination checker</strong>, needed only for the
