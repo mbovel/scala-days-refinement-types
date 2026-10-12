@@ -196,7 +196,7 @@ True(256, 0, 0) // ⛔️ at compile time</code></pre>
 <h2><em>first-class</em>?</h2>
 <p>In our prototype, refinement types are ordinary Scala types,
 participating in inference, <strong>overload resolution</strong>
-(example 3), <strong>subtyping</strong> (example 4), etc.</p>
+(example 3), subtyping, etc.</p>
 <div class="fragment">
 <p>In contrast, Liquid Haskell is a plugin that runs after type
 checking:</p>
@@ -250,31 +250,10 @@ def min(l: List[Int]) =
 def ex1(l: List[Int] with l.isSorted) =
   min(l) // calls the first overload</code></pre>
 </section>
-<section id="example-4-bounded-polymorphism" class="slide level2">
-<h2>Example 4: Bounded polymorphism</h2>
-<p style="margin-bottom: -1em">
-<small>Inspired by <a
-href="https://goto.ucsd.edu/~rjhala/liquid/abstract_refinement_types.pdf">Abstract
-Refinement Types</a> (Vazou et al., ESOP 2013).</small>
-</p>
-<pre class="scala"><code>given Ord[Int] = ...
-
-def max[T: Ord as ord, U &lt;: T](x: U, y: U): U =
-  if ord.compare(x, y) &gt;= 0 then x else y
-
-type Even = {v: Int with v % 2 == 0}
-
-def ex2: Even =
-  maximum(List(2, 4, 6))</code></pre>
-<div class="fragment">
-<pre class="scala"><code>def maximum[T: Ord, U &lt;: T](xs: List[U]): U =
-  xs.reduce(max)</code></pre>
-</div>
-</section>
 <section id="refinement-types-vs.-libraries" class="slide level2">
 <h2>Refinement types vs. libraries</h2>
-<p>With <a href="https://github.com/Iltotore/iron">Iron</a>, predicates
-are defined as type-level constraints:</p>
+<p>With <a href="https://github.com/Iltotore/iron">Iron</a>, example 3
+also works, but predicates are type-level constraints:</p>
 <pre class="scala"><code>extension (l: List[Int]) def isSorted(): Boolean =
   l.zip(l.drop(1)).forall((x, y) =&gt; x &lt;= y)
 
@@ -401,7 +380,7 @@ refinement type is expected:</p>
   if x &gt; 0 then x else 1</code></pre>
 <div class="fragment">
 <p>In the <a
-href="https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/11_merge_sort_bounds.scala">bound-checked
+href="https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/10_merge_sort_bounds.scala">bound-checked
 merge sort</a>, <code>head</code> and <code>tail</code> require a
 non-empty sequence (<code>SafeSeq[T] with a.len &gt; 0</code>):</p>
 <pre class="scala small"><code>def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
@@ -542,8 +521,8 @@ href="https://github.com/mbovel/scala-days-refinement-types/blob/main/stainless-
 sort</a>: sorted, same size, same elements.</p>
 </div>
 </section>
-<section id="example-5-memoized-fibonacci" class="slide level2">
-<h2>Example 5: Memoized Fibonacci</h2>
+<section id="example-4-memoized-fibonacci" class="slide level2">
+<h2>Example 4: Memoized Fibonacci</h2>
 <p>A map whose values are related to their keys by a predicate
 <code>p</code>:</p>
 <pre class="scala"><code>case class DepMap[K, V](p: (K, V) =&gt; Boolean):
@@ -555,8 +534,8 @@ sort</a>: sorted, same size, same elements.</p>
   if n &lt;= 1 then 1 else fib(n - 1) + fib(n - 2)</code></pre>
 </div>
 </section>
-<section id="example-5-memoized-fibonacci-2" class="slide level2">
-<h2>Example 5: Memoized Fibonacci (2)</h2>
+<section id="example-4-memoized-fibonacci-2" class="slide level2">
+<h2>Example 4: Memoized Fibonacci (2)</h2>
 <p>A memoized version, checked to always return <code>fib(n)</code>:</p>
 <pre class="scala"><code>val cache: (DepMap[Int, Int] with (cache == DepMap[Int, Int]((k, v) =&gt; v == fib(k)))) =
   DepMap[Int, Int]((k, v) =&gt; v == fib(k))
@@ -674,6 +653,27 @@ scalacOptions += &quot;-language:experimental.qualifiedTypes&quot;</code></pre>
 <section id="bonus-slides" class="title-slide slide level1">
 <h1>Bonus slides</h1>
 
+</section>
+<section id="backup-bounded-polymorphism" class="slide level2">
+<h2>Backup: Bounded polymorphism</h2>
+<p style="margin-bottom: -1em">
+<small>Inspired by <a
+href="https://goto.ucsd.edu/~rjhala/liquid/abstract_refinement_types.pdf">Abstract
+Refinement Types</a> (Vazou et al., ESOP 2013).</small>
+</p>
+<pre class="scala"><code>given Ord[Int] = ...
+
+def max[T: Ord as ord, U &lt;: T](x: U, y: U): U =
+  if ord.compare(x, y) &gt;= 0 then x else y
+
+type Even = {v: Int with v % 2 == 0}
+
+def ex2: Even =
+  maximum(List(2, 4, 6))</code></pre>
+<div class="fragment">
+<pre class="scala"><code>def maximum[T: Ord, U &lt;: T](xs: List[U]): U =
+  xs.reduce(max)</code></pre>
+</div>
 </section>
 <section id="refinement-types-vs.-existing-constructs"
 class="slide level2">

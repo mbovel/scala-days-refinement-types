@@ -211,7 +211,7 @@ True(256, 0, 0) // ⛔️ at compile time
 
 ## _first-class_?
 
-In our prototype, refinement types are ordinary Scala types, participating in inference, **overload resolution** (example 3), **subtyping** (example 4), etc.
+In our prototype, refinement types are ordinary Scala types, participating in inference, **overload resolution** (example 3), subtyping, etc.
 
 <div class="fragment">
 
@@ -286,34 +286,9 @@ def ex1(l: List[Int] with l.isSorted) =
   min(l) // calls the first overload
 ```
 
-## Example 4: Bounded polymorphism
-
-<p style="margin-bottom: -1em"><small>Inspired by [Abstract Refinement Types](https://goto.ucsd.edu/~rjhala/liquid/abstract_refinement_types.pdf) (Vazou et al., ESOP 2013).</small></p>
-
-```scala
-given Ord[Int] = ...
-
-def max[T: Ord as ord, U <: T](x: U, y: U): U =
-  if ord.compare(x, y) >= 0 then x else y
-
-type Even = {v: Int with v % 2 == 0}
-
-def ex2: Even =
-  maximum(List(2, 4, 6))
-```
-
-<div class="fragment">
-
-```scala
-def maximum[T: Ord, U <: T](xs: List[U]): U =
-  xs.reduce(max)
-```
-
-</div>
-
 ## Refinement types vs. libraries
 
-With [Iron](https://github.com/Iltotore/iron), predicates are defined as type-level constraints:
+With [Iron](https://github.com/Iltotore/iron), example 3 also works, but predicates are type-level constraints:
 
 ```scala
 extension (l: List[Int]) def isSorted(): Boolean =
@@ -477,7 +452,7 @@ def pos(x: Int): {v: Int with v > 0} =
 
 <div class="fragment">
 
-In the [bound-checked merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/11_merge_sort_bounds.scala), `head` and `tail` require a non-empty sequence (`SafeSeq[T] with a.len > 0`):
+In the [bound-checked merge sort](https://github.com/mbovel/scala-days-refinement-types/blob/main/dotty-examples/10_merge_sort_bounds.scala), `head` and `tail` require a non-empty sequence (`SafeSeq[T] with a.len > 0`):
 
 ```{.scala .small}
 def merge[T: Ordering as ord](left: SafeSeq[T], right: SafeSeq[T]): SafeSeq[T] =
@@ -650,7 +625,7 @@ See also: a verified [merge sort](https://github.com/mbovel/scala-days-refinemen
 
 </div>
 
-## Example 5: Memoized Fibonacci
+## Example 4: Memoized Fibonacci
 
 A map whose values are related to their keys by a predicate `p`:
 
@@ -671,7 +646,7 @@ def fib(n: Int): {r: Int with r == (if n <= 1 then 1 else fib(n - 1) + fib(n - 2
 
 </div>
 
-## Example 5: Memoized Fibonacci (2)
+## Example 4: Memoized Fibonacci (2)
 
 A memoized version, checked to always return `fib(n)`:
 
@@ -785,6 +760,31 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 </div>
 
 # Bonus slides
+
+## Backup: Bounded polymorphism
+
+<p style="margin-bottom: -1em"><small>Inspired by [Abstract Refinement Types](https://goto.ucsd.edu/~rjhala/liquid/abstract_refinement_types.pdf) (Vazou et al., ESOP 2013).</small></p>
+
+```scala
+given Ord[Int] = ...
+
+def max[T: Ord as ord, U <: T](x: U, y: U): U =
+  if ord.compare(x, y) >= 0 then x else y
+
+type Even = {v: Int with v % 2 == 0}
+
+def ex2: Even =
+  maximum(List(2, 4, 6))
+```
+
+<div class="fragment">
+
+```scala
+def maximum[T: Ord, U <: T](xs: List[U]): U =
+  xs.reduce(max)
+```
+
+</div>
 
 ## Refinement types vs. existing constructs
 
