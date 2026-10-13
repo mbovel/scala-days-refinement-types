@@ -363,6 +363,28 @@ Unlike libraries:
 
 </div>
 
+## Working with agents
+
+<div class="chat">
+<div class="me">Please implement <code>def foo</code>.</div>
+<div class="agent fragment">Done.</div>
+<div class="me fragment">But this is wrong!</div>
+<div class="agent fragment">You're absolutely right!</div>
+</div>
+
+## Working with agents
+
+<div class="chat">
+<div class="me">Please implement <code>def foo(): {res: Any with correct(res)}</code>.</div>
+<div class="agent fragment">Done and verified.</div>
+</div>
+
+<div class="fragment" style="margin-top: 2em;">
+
+Refinement types give precise, checked interfaces: with agents, and between modules.
+
+</div>
+
 ## What are valid predicates?
 
 <div class="fragment">

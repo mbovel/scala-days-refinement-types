@@ -243,6 +243,30 @@ code {
     margin-top: 0;
 }
 
+/* Chat bubbles, on the "Working with agents" slides. */
+.chat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+
+.chat > div {
+    max-width: 75%;
+    padding: 0.4em 0.9em;
+    border-radius: 1em;
+}
+
+.chat .me {
+    align-self: flex-end;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.chat .agent {
+    align-self: flex-start;
+    background-color: #555;
+}
+
 /* Row of linked QR codes with captions, on the conclusion slide. */
 .qr-codes {
     display: flex;
