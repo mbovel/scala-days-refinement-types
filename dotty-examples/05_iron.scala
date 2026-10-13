@@ -7,13 +7,13 @@ package ironexample
 
 import io.github.iltotore.iron.*
 
-extension (l: List[Int]) def isSorted(): Boolean =
+extension (l: List[Int]) def isSorted: Boolean =
   l.zip(l.drop(1)).forall((x, y) => x <= y)
 
 final class IsSorted
 
 given Constraint[List[Int], IsSorted] with
-  override inline def test(inline l: List[Int]): Boolean = l.isSorted()
+  override inline def test(inline l: List[Int]): Boolean = l.isSorted
 
   override inline def message: String = "List must be sorted"
 

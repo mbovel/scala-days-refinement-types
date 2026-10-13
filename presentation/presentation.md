@@ -291,12 +291,9 @@ def ex1(l: List[Int] with l.isSorted) =
 With [Iron](https://github.com/Iltotore/iron), example 3 also works, but predicates are type-level constraints:
 
 ```scala
-extension (l: List[Int]) def isSorted(): Boolean =
-  l.zip(l.drop(1)).forall((x, y) => x <= y)
-
 final class IsSorted
 given Constraint[List[Int], IsSorted] with
-  override inline def test(inline l: List[Int]): Boolean = l.isSorted()
+  override inline def test(inline l: List[Int]): Boolean = l.isSorted
   override inline def message: String = "List must be sorted"
 
 def min(l: List[Int] :| IsSorted): Int = l.head
@@ -317,25 +314,19 @@ Existing constructs (structural refinements, singleton types, compile-time opera
 
 <div class="fragment">
 
-1. **Limited reasoning**: only fields, literals, constant folding, etc.
+1. **Different languages**: predicates are written at the type level (`IsSorted`, `as.size.type`), not at the term level (`isSorted`, `as.size`).
 
 </div>
 
 <div class="fragment">
 
-2. **Not inferred**: types must be annotated manually, or programs are not typable at all.
+2. **Manual reflection**: each term-level method must be reflected at the type level by hand, like `isSorted` as `IsSorted` and its `Constraint`.
 
 </div>
 
 <div class="fragment">
 
-3. **Different languages**: predicates are written at the type level (`IsSorted`, `as.size.type`), not at the term level (`isSorted`, `as.size`).
-
-</div>
-
-<div class="fragment">
-
-4. **Manual reflection**: each term-level method must be reflected at the type level by hand, like `isSorted` as `IsSorted` and its `Constraint`.
+3. **Limited reasoning**: only fields, literals, constant folding, etc.
 
 </div>
 
