@@ -238,39 +238,6 @@ given Constraint[List[Int], IsSorted] with
 
 def min(l: List[Int] :| IsSorted): Int = l.head</code></pre>
 </section>
-<section id="limitations-of-existing-approaches" class="slide level2">
-<h2>Limitations of existing approaches</h2>
-<p>Existing constructs (structural refinements, singleton types,
-compile-time operations) and libraries (Iron) suffer from:</p>
-<div class="fragment">
-<ol type="1">
-<li><strong>Different languages</strong>: predicates are written at the
-type level (<code>IsSorted</code>, <code>as.size.type</code>), not at
-the term level (<code>isSorted</code>, <code>as.size</code>).</li>
-</ol>
-</div>
-<div class="fragment">
-<ol start="2" type="1">
-<li><strong>Manual reflection</strong>: each term-level method must be
-reflected at the type level by hand, like <code>isSorted</code> as
-<code>IsSorted</code> and its <code>Constraint</code>.</li>
-</ol>
-</div>
-<div class="fragment">
-<ol start="3" type="1">
-<li><strong>Limited reasoning</strong>: only what one can implement with
-implicit search, match types and compile time operations. See <a
-href="https://github.com/mbovel/scalacon-typelevel-operations">Type-level
-programming in Scala (ScalaCon 2021)</a>.</li>
-</ol>
-</div>
-<div class="fragment">
-<ol start="4" type="1">
-<li><strong>Limited inference</strong>: no flow typing, e.g. for
-<code>if x &gt; 0 then x else 1</code>.</li>
-</ol>
-</div>
-</section>
 <section id="what-we-want" class="slide level2">
 <h2>What we want</h2>
 <div class="columns">
@@ -290,8 +257,11 @@ live in signatures.</li>
 <p>Unlike libraries:</p>
 <ol start="4" type="1">
 <li><strong>Term-level predicates</strong>: plain Scala expressions, no
-distinct type-level constructs.</li>
-<li><strong>More reasoning</strong>: a specialized solver.</li>
+type-level copy of each method (like <code>IsSorted</code> and its
+<code>Constraint</code>).</li>
+<li><strong>More reasoning</strong>: a specialized solver, beyond <a
+href="https://github.com/mbovel/scalacon-typelevel-operations">type-level
+programming</a>.</li>
 <li><strong>Better inference</strong>: refinements introduced when
 needed, and from <code>if</code> conditions.</li>
 </ol>
@@ -335,7 +305,7 @@ between modules.</p>
 <h2>What are valid predicates?</h2>
 <div class="fragment">
 <pre class="scala"><code>var x = 3
-val y: Int with y == 3 = x // ⛔️ x is mutable</code></pre>
+val y: (Int with y == x) = x // ⛔️ x is mutable</code></pre>
 </div>
 <div class="fragment">
 <pre class="scala"><code>class Box(val value: Int)

@@ -270,34 +270,6 @@ given Constraint[List[Int], IsSorted] with
 def min(l: List[Int] :| IsSorted): Int = l.head
 ```
 
-## Limitations of existing approaches
-
-Existing constructs (structural refinements, singleton types, compile-time operations) and libraries (Iron) suffer from:
-
-<div class="fragment">
-
-1. **Different languages**: predicates are written at the type level (`IsSorted`, `as.size.type`), not at the term level (`isSorted`, `as.size`).
-
-</div>
-
-<div class="fragment">
-
-2. **Manual reflection**: each term-level method must be reflected at the type level by hand, like `isSorted` as `IsSorted` and its `Constraint`.
-
-</div>
-
-<div class="fragment">
-
-3. **Limited reasoning**: only what one can implement with implicit search, match types and compile time operations. See [Type-level programming in Scala (ScalaCon 2021)](https://github.com/mbovel/scalacon-typelevel-operations).
-
-</div>
-
-<div class="fragment">
-
-4. **Limited inference**: no flow typing, e.g. for `if x > 0 then x else 1`.
-
-</div>
-
 ## What we want
 
 <div class="columns">
@@ -318,8 +290,8 @@ Like libraries, unlike assertions:
 
 Unlike libraries:
 
-4. **Term-level predicates**: plain Scala expressions, no distinct type-level constructs.
-5. **More reasoning**: a specialized solver.
+4. **Term-level predicates**: plain Scala expressions, no type-level copy of each method (like `IsSorted` and its `Constraint`).
+5. **More reasoning**: a specialized solver, beyond [type-level programming](https://github.com/mbovel/scalacon-typelevel-operations).
 6. **Better inference**: refinements introduced when needed, and from `if` conditions.
 
 </div>
@@ -356,7 +328,7 @@ Refinement types give precise, checked interfaces: with agents, and between modu
 
 ```scala
 var x = 3
-val y: Int with y == 3 = x // ⛔️ x is mutable
+val y: (Int with y == x) = x // ⛔️ x is mutable
 ```
 
 </div>

@@ -8,7 +8,11 @@ package validpredicates
 
 def mutable =
   var x = 3
-  // val y: Int with y == 3 = x // error: x is mutable
+  // val y: (Int with y == x) = x // error: x is mutable
+
+def immutable =
+  val x = 3
+  val y: (Int with y == x) = x
 
 class Box(val value: Int)
 
