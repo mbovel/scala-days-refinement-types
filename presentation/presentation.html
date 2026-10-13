@@ -197,27 +197,6 @@ True(256, 0, 0) // ⛔️ at compile time</code></pre>
 </div>
 </div>
 </section>
-<section id="error-messages" class="slide level2">
-<h2>Error messages</h2>
-<p>Predicates are type-checked like other Scala expressions:</p>
-<pre class="scala"><code>def f[A](l: List[A] with l.notEmpty) = () // error</code></pre>
-<pre class="text"><code>-- [E008] Not Found Error: 03_error_messages.scala:9:27
-9 |def f[A](l: List[A] with l.notEmpty) = () // error
-  |                         ^^^^^^^^^^
-  |      value notEmpty is not a member of List[A] - did you mean l.nonEmpty?</code></pre>
-</section>
-<section id="error-messages-and-inference" class="slide level2">
-<h2>Error messages and inference</h2>
-<p>Same inference and error reporting as for other Scala types:</p>
-<pre class="scala"><code>type PosInt = {v: Int with v &gt; 0}
-def g[T](f: T =&gt; Unit, x: T) = f(x)
-g((x: PosInt) =&gt; x * 2, -2) // error</code></pre>
-<pre class="text"><code>-- [E007] Type Mismatch Error: 03_error_messages.scala:17:26
-17 |  g((x: PosInt) =&gt; x * 2, -2) // error
-   |                          ^^
-   |                          Found:    (-2 : Int)
-   |                          Required: {x: Int with x &gt; 0}</code></pre>
-</section>
 <section id="example-3-overload-resolution" class="slide level2">
 <h2>Example 3: Overload resolution</h2>
 <pre class="scala"><code>@targetName(&quot;minSorted&quot;)
@@ -620,7 +599,8 @@ scalacOptions += &quot;-language:experimental.qualifiedTypes&quot;</code></pre>
 <section id="thank-you" class="slide level2">
 <h2>Thank you!</h2>
 <div class="columns">
-<div class="column qr-codes">
+<div class="column">
+<div class="qr-codes">
 <figure>
 <a href="https://mbovel.github.io/scala-days-refinement-types/presentation/presentation.html"><img src="./qr-code-presentation.svg" alt="QR code to the slides" /></a>
 <figcaption>
@@ -639,6 +619,9 @@ scalacOptions += &quot;-language:experimental.qualifiedTypes&quot;</code></pre>
 <a href="https://matt.bovel.net/scala-refinement-types/playground/">Playground</a>
 </figcaption>
 </figure>
+</div>
+<p>Examples available at <a
+href="https://github.com/mbovel/scala-days-refinement-types">github.com/mbovel/scala-days-refinement-types</a>.</p>
 </div><div class="column" style="flex: 0 0 auto;">
 <figure style="text-align: center; margin: -1.2em 0 0 0;">
 <img src="./refined_type.png" style="height: 450px; width: auto;" />
@@ -653,6 +636,27 @@ scalacOptions += &quot;-language:experimental.qualifiedTypes&quot;</code></pre>
 <section id="bonus-slides" class="title-slide slide level1">
 <h1>Bonus slides</h1>
 
+</section>
+<section id="error-messages" class="slide level2">
+<h2>Error messages</h2>
+<p>Predicates are type-checked like other Scala expressions:</p>
+<pre class="scala"><code>def f[A](l: List[A] with l.notEmpty) = () // error</code></pre>
+<pre class="text"><code>-- [E008] Not Found Error: 03_error_messages.scala:9:27
+9 |def f[A](l: List[A] with l.notEmpty) = () // error
+  |                         ^^^^^^^^^^
+  |      value notEmpty is not a member of List[A] - did you mean l.nonEmpty?</code></pre>
+</section>
+<section id="error-messages-and-inference" class="slide level2">
+<h2>Error messages and inference</h2>
+<p>Same inference and error reporting as for other Scala types:</p>
+<pre class="scala"><code>type PosInt = {v: Int with v &gt; 0}
+def g[T](f: T =&gt; Unit, x: T) = f(x)
+g((x: PosInt) =&gt; x * 2, -2) // error</code></pre>
+<pre class="text"><code>-- [E007] Type Mismatch Error: 03_error_messages.scala:17:26
+17 |  g((x: PosInt) =&gt; x * 2, -2) // error
+   |                          ^^
+   |                          Found:    (-2 : Int)
+   |                          Required: {x: Int with x &gt; 0}</code></pre>
 </section>
 <section id="backup-bounded-polymorphism" class="slide level2">
 <h2>Backup: Bounded polymorphism</h2>

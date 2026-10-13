@@ -210,38 +210,6 @@ True(256, 0, 0) // ⛔️ at compile time
 
 </div>
 
-## Error messages
-
-Predicates are type-checked like other Scala expressions:
-
-```scala
-def f[A](l: List[A] with l.notEmpty) = () // error
-```
-
-```text
--- [E008] Not Found Error: 03_error_messages.scala:9:27
-9 |def f[A](l: List[A] with l.notEmpty) = () // error
-  |                         ^^^^^^^^^^
-  |      value notEmpty is not a member of List[A] - did you mean l.nonEmpty?
-```
-
-## Error messages and inference
-
-Same inference and error reporting as for other Scala types:
-
-```scala
-type PosInt = {v: Int with v > 0}
-def g[T](f: T => Unit, x: T) = f(x)
-g((x: PosInt) => x * 2, -2) // error
-```
-
-```text
--- [E007] Type Mismatch Error: 03_error_messages.scala:17:26
-17 |  g((x: PosInt) => x * 2, -2) // error
-   |                          ^^
-   |                          Found:    (-2 : Int)
-   |                          Required: {x: Int with x > 0}
-```
 
 ## Example 3: Overload resolution
 
@@ -703,7 +671,9 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 
 <div class="columns">
 
-<div class="column qr-codes">
+<div class="column">
+
+<div class="qr-codes">
 
 <figure>
 <a href="https://mbovel.github.io/scala-days-refinement-types/presentation/presentation.html"><img src="./qr-code-presentation.svg" alt="QR code to the slides" /></a>
@@ -722,6 +692,10 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 
 </div>
 
+Examples available at [github.com/mbovel/scala-days-refinement-types](https://github.com/mbovel/scala-days-refinement-types).
+
+</div>
+
 <div class="column" style="flex: 0 0 auto;">
 
 <figure style="text-align: center; margin: -1.2em 0 0 0;">
@@ -734,6 +708,40 @@ scalacOptions += "-language:experimental.qualifiedTypes"
 </div>
 
 # Bonus slides
+
+
+## Error messages
+
+Predicates are type-checked like other Scala expressions:
+
+```scala
+def f[A](l: List[A] with l.notEmpty) = () // error
+```
+
+```text
+-- [E008] Not Found Error: 03_error_messages.scala:9:27
+9 |def f[A](l: List[A] with l.notEmpty) = () // error
+  |                         ^^^^^^^^^^
+  |      value notEmpty is not a member of List[A] - did you mean l.nonEmpty?
+```
+
+## Error messages and inference
+
+Same inference and error reporting as for other Scala types:
+
+```scala
+type PosInt = {v: Int with v > 0}
+def g[T](f: T => Unit, x: T) = f(x)
+g((x: PosInt) => x * 2, -2) // error
+```
+
+```text
+-- [E007] Type Mismatch Error: 03_error_messages.scala:17:26
+17 |  g((x: PosInt) => x * 2, -2) // error
+   |                          ^^
+   |                          Found:    (-2 : Int)
+   |                          Required: {x: Int with x > 0}
+```
 
 ## Backup: Bounded polymorphism
 
