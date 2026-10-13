@@ -47,15 +47,25 @@ Scala</h1>
 href="https://matt.bovel.net">matt.bovel.net</a></p>
 </section>
 
+<section id="whoami" class="slide level2">
+<h2>whoami</h2>
+<p>PhD student at EPFL, co-advised by:</p>
+<ul>
+<li>Martin Odersky (LAMP/Scala)</li>
+<li>Viktor Kunčak (LARA/Stainless)</li>
+</ul>
+</section>
 <section id="what-is-this-about" class="slide level2">
 <h2>What is this about?</h2>
-<p>A <em>prototype</em> implementation of refinement types for Scala, as
-<em>first-class</em> types: ordinary Scala types, checked by the
-compiler itself.</p>
+<p>A <em>prototype</em> implementation of refinement types for
+Scala.</p>
 <div class="fragment">
 <p>A <em>refinement type</em> is a type <em>refined</em> with a logical
-predicate. For example:</p>
-<pre class="scala"><code>type Pos = {x: Int with x &gt;= 0}</code></pre>
+predicate.</p>
+</div>
+<div class="fragment">
+<p>For example:</p>
+<pre class="scala"><code>type Pos = {x: Int with x &gt; 0}</code></pre>
 </div>
 </section>
 <section id="syntax" class="slide level2">
@@ -89,22 +99,6 @@ val ys: List[Int] = ???
 zip(concat(xs, ys), concat(ys, xs)) // ✅
 zip(concat(xs, ys), concat(xs, xs)) // ⛔️ found size xs.size + xs.size,
                                     //    required xs.size + ys.size</code></pre>
-</section>
-<section id="whoami" class="slide level2">
-<h2>whoami</h2>
-<div class="columns">
-<div class="column">
-<p><img src="./baby_matt.png" height="500em" class="fragment" /></p>
-</div><div class="column">
-<div class="fragment">
-<p>PhD student at EPFL, co-advised by:</p>
-<ul>
-<li>Martin Odersky (LAMP/Scala)</li>
-<li>Viktor Kunčak (LARA/Stainless)</li>
-</ul>
-</div>
-</div>
-</div>
 </section>
 <section id="oopsla-2026-paper" class="slide level2">
 <h2>OOPSLA 2026 paper</h2>

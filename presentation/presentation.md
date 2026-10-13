@@ -6,16 +6,30 @@ title-slide-attributes:
   data-background-size: cover
 ---
 
+## whoami
+
+PhD student at EPFL, co-advised by:
+
+- Martin Odersky (LAMP/Scala)
+- Viktor Kunčak (LARA/Stainless)
+
+
 ## What is this about?
 
-A *prototype* implementation of refinement types for Scala, as _first-class_ types: ordinary Scala types, checked by the compiler itself.
+A *prototype* implementation of refinement types for Scala.
 
 <div class="fragment">
 
-A _refinement type_ is a  type _refined_ with a logical predicate. For example:
+A _refinement type_ is a  type _refined_ with a logical predicate.
+
+</div>
+
+<div class="fragment">
+
+For example:
 
 ```scala
-type Pos = {x: Int with x >= 0}
+type Pos = {x: Int with x > 0}
 ```
 
 </div>
@@ -69,32 +83,6 @@ zip(concat(xs, ys), concat(ys, xs)) // ✅
 zip(concat(xs, ys), concat(xs, xs)) // ⛔️ found size xs.size + xs.size,
                                     //    required xs.size + ys.size
 ```
-
-## whoami
-
-<div class="columns">
-
-<div class="column">
-
-<img src="./baby_matt.png" height="500em" class="fragment" />
-
-
-</div>
-
-<div class="column">
-
-<div class="fragment">
-
-PhD student at EPFL, co-advised by:
-
-- Martin Odersky (LAMP/Scala)
-- Viktor Kunčak (LARA/Stainless)
-
-</div>
-
-</div>
-
-</div>
 
 ## OOPSLA 2026 paper
 
