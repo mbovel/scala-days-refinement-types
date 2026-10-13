@@ -556,8 +556,7 @@ Note: like with other types, you can also use `.asInstanceOf[ID]` to skip the ch
 By default, a refinement that cannot be verified statically is a type error:
 
 ```scala
-def getInt(): Int = 1
-val x: {v: Int with v == 1} = getInt() // ⛔️ type error
+val x: {v: Int with v == 1} = readInt() // ⛔️ type error
 ```
 
 <div class="fragment">

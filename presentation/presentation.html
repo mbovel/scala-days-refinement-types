@@ -466,8 +466,7 @@ Schneeberger</a>.</p>
 <h2>Gradual typing</h2>
 <p>By default, a refinement that cannot be verified statically is a type
 error:</p>
-<pre class="scala"><code>def getInt(): Int = 1
-val x: {v: Int with v == 1} = getInt() // ⛔️ type error</code></pre>
+<pre class="scala"><code>val x: {v: Int with v == 1} = readInt() // ⛔️ type error</code></pre>
 <div class="fragment">
 <p>A language import turns these errors into something else:</p>
 <pre class="scala"><code>import language.experimental.qualifiedTypes.runtimeChecks // or warn, or silent</code></pre>
