@@ -34,6 +34,18 @@ type Pos = {x: Int with x > 0}
 
 </div>
 
+<div class="fragment">
+
+*First-class*: directly integrated into the compiler and Scala type system.
+
+</div>
+
+<div class="fragment">
+
+*Logical*: not to be confused with existing [strutural refined types](https://docs.scala-lang.org/scala3/book/types-structural.html).
+
+</div>
+
 ## Syntax
 
 Long form, with an explicit binder:
