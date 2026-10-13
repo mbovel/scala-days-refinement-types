@@ -272,9 +272,6 @@ g((x: PosInt) => x * 2, -2) // error
 ## Example 3: Overload resolution
 
 ```scala
-extension (l: List[Int]) def isSorted: Boolean =
-  l.zip(l.drop(1)).forall((x, y) => x <= y)
-
 @targetName("minSorted")
 def min(l: List[Int] with l.isSorted) =
   l.head // O(1)
@@ -326,7 +323,43 @@ Existing constructs (structural refinements, singleton types, compile-time opera
 
 <div class="fragment">
 
-3. **Limited reasoning**: only fields, literals, constant folding, etc.
+3. **Limited reasoning**: only what one can implement with implicit search, match types and compile time operations. See [Type-level programming in Scala (ScalaCon 2021)](https://github.com/mbovel/scalacon-typelevel-operations).
+
+</div>
+
+<div class="fragment">
+
+4. **Limited inference**: no flow typing, e.g. for `if x > 0 then x else 1`.
+
+</div>
+
+## What we want
+
+<div class="columns">
+
+<div class="column">
+
+Like libraries, unlike assertions:
+
+1. **Compile-time guarantees** for _all_ values, with no run-time cost (by default).
+2. **Composability**: `List[{x: Int with x > 0}]`, `{x: Int with x > 0} => String`.
+3. **Self-documenting APIs**: pre- and post-conditions live in signatures.
+
+</div>
+
+<div class="column">
+
+<div class="fragment">
+
+Unlike libraries:
+
+4. **Term-level predicates**: plain Scala expressions, no distinct type-level constructs.
+5. **More reasoning**: a specialized solver.
+6. **Better inference**: refinements introduced when needed, and from `if` conditions.
+
+</div>
+
+</div>
 
 </div>
 
@@ -414,7 +447,7 @@ Why not always infer the precise type?
 
 <div class="fragment" data-fragment-index="3">
 
-3. **Developer eXperience:** users would be flooded with complex types.
+3. **Developer experience:** users would be flooded with complex types.
 
 </div>
 
@@ -549,7 +582,7 @@ val id: ID =
 
 <div class="fragment">
 
-Note: like with other types, you can also use `.asInstanceOf[ID]` directly to skip the check altogether.
+Note: like with other types, you can also use `.asInstanceOf[ID]` to skip the check altogether.
 
 </div>
 
@@ -590,25 +623,17 @@ import language.experimental.qualifiedTypes.runtimeChecks // or warn, or silent
 
 ## Verifying with Stainless
 
-The [Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html) verifier can use Dotty's refinement types (support implemented by [Kasia Marek](https://www.linkedin.com/in/kasiamarek/))! It compiles in `silent` mode, then verifies refinements itself with SMT solvers:
+The [Stainless](https://epfl-lara.github.io/stainless/refinementtypes.html) verifier can use Dotty's refinement types, thanks to [Kasia Marek](https://www.linkedin.com/in/kasiamarek/)!
+
+It compiles in `silent` mode, then verifies refinements itself with SMT solvers:
 
 ```scala
 def sum(n: BigInt with n >= 0): {r: BigInt with 2 * r == n * (n + 1)} =
   if n == 0 then BigInt(0) else n + sum(n - 1) // ✅ verified
+
 def abs(x: Int): {r: Int with r >= 0} =
   if x >= 0 then x else -x // ⛔️ counter-example: x = -2147483648
 ```
-
-<div class="fragment">
-
-Install it with the [script](https://github.com/mbovel/scala-days-refinement-types/blob/main/install.sh) from this talk's repository:
-
-```sh
-./install.sh # Stainless 0.10.2, with z3 and cvc5, in .stainless/
-.stainless/stainless stainless-examples/sum.scala
-```
-
-</div>
 
 <div class="fragment">
 
@@ -679,7 +704,7 @@ def fibMemo(n: Int): {res: Int with res == fib(n)} =
 
 - **Better solver** for what our lightweight solver cannot do.
 
-- **A termination checker**, only for the solver rules that need it (see backup).
+- **A termination checker** (Master semester project from [Ozair Faizan](https://people.epfl.ch/ahmad.faizan) to be included).
 
 - **Term-parameterized types**, to modularize predicates:
 
