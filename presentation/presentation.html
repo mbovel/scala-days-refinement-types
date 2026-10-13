@@ -237,10 +237,6 @@ given Constraint[List[Int], IsSorted] with
   override inline def message: String = &quot;List must be sorted&quot;
 
 def min(l: List[Int] :| IsSorted): Int = l.head</code></pre>
-<div class="fragment">
-<pre class="scala"><code>min(List(1, 2, 3))              // ⛔️ cannot be verified at compile time
-min(List(1, 2, 3).refineUnsafe) // ✅ checked at run time</code></pre>
-</div>
 </section>
 <section id="limitations-of-existing-approaches" class="slide level2">
 <h2>Limitations of existing approaches</h2>

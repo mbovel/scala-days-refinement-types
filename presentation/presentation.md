@@ -270,15 +270,6 @@ given Constraint[List[Int], IsSorted] with
 def min(l: List[Int] :| IsSorted): Int = l.head
 ```
 
-<div class="fragment">
-
-```scala
-min(List(1, 2, 3))              // ⛔️ cannot be verified at compile time
-min(List(1, 2, 3).refineUnsafe) // ✅ checked at run time
-```
-
-</div>
-
 ## Limitations of existing approaches
 
 Existing constructs (structural refinements, singleton types, compile-time operations) and libraries (Iron) suffer from:
