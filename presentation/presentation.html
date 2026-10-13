@@ -49,8 +49,9 @@ href="https://matt.bovel.net">matt.bovel.net</a></p>
 
 <section id="what-is-this-about" class="slide level2">
 <h2>What is this about?</h2>
-<p>A <em>prototype</em> implementation of refinement types for
-Scala.</p>
+<p>A <em>prototype</em> implementation of refinement types for Scala, as
+<em>first-class</em> types: ordinary Scala types, checked by the
+compiler itself.</p>
 <div class="fragment">
 <p>A <em>refinement type</em> is a type <em>refined</em> with a logical
 predicate. For example:</p>
@@ -191,28 +192,6 @@ def trueIndex(r: Comp, g: Comp, b: Comp) =
 True(256, 0, 0) // ⛔️ at compile time</code></pre>
 </div>
 </div>
-</div>
-</section>
-<section id="first-class" class="slide level2">
-<h2><em>first-class</em>?</h2>
-<p>In our prototype, refinement types are ordinary Scala types,
-participating in inference, <strong>overload resolution</strong>
-(example 3), subtyping, etc.</p>
-<div class="fragment">
-<p>In contrast, Liquid Haskell is a plugin that runs after type
-checking:</p>
-<pre class="haskell"><code>{-@ x :: {v:Int | v mod 2 == 0 } @-}
-let x = 42 :: Int in ...</code></pre>
-<p>“It’s sort of like you’re doing two things at once […] you’re also
-talking to GHC, but you’re also talking to LiquidHaskell.” <small>— a
-participant in <a
-href="https://dl.acm.org/doi/10.1145/3729327">Usability Barriers for
-Liquid Types</a> (Gamboa et al., PLDI 2025)</small></p>
-</div>
-<div class="fragment">
-<p>Our implementation is directly integrated into the Scala 3
-compiler:</p>
-<pre class="scala"><code>val x: (Int with x % 2 == 0) = 42</code></pre>
 </div>
 </section>
 <section id="error-messages" class="slide level2">
@@ -813,6 +792,28 @@ val w: {res: Int with res == 5} = inc(inc(3))</code></pre>
 <div class="fragment">
 <p>This rule needs the called function to terminate: a result type says
 nothing about a call that never returns.</p>
+</div>
+</section>
+<section id="backup-first-class" class="slide level2">
+<h2>Backup: <em>first-class</em>?</h2>
+<p>In our prototype, refinement types are ordinary Scala types,
+participating in inference, <strong>overload resolution</strong>
+(example 3), subtyping, etc.</p>
+<div class="fragment">
+<p>In contrast, Liquid Haskell is a plugin that runs after type
+checking:</p>
+<pre class="haskell"><code>{-@ x :: {v:Int | v mod 2 == 0 } @-}
+let x = 42 :: Int in ...</code></pre>
+<p>“It’s sort of like you’re doing two things at once […] you’re also
+talking to GHC, but you’re also talking to LiquidHaskell.” <small>— a
+participant in <a
+href="https://dl.acm.org/doi/10.1145/3729327">Usability Barriers for
+Liquid Types</a> (Gamboa et al., PLDI 2025)</small></p>
+</div>
+<div class="fragment">
+<p>Our implementation is directly integrated into the Scala 3
+compiler:</p>
+<pre class="scala"><code>val x: (Int with x % 2 == 0) = 42</code></pre>
 </div>
 </section>
 <section id="backup-lh-usability-barriers" class="slide level2">

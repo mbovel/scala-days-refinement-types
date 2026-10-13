@@ -8,7 +8,7 @@ title-slide-attributes:
 
 ## What is this about?
 
-A *prototype* implementation of refinement types for Scala.
+A *prototype* implementation of refinement types for Scala, as _first-class_ types: ordinary Scala types, checked by the compiler itself.
 
 <div class="fragment">
 
@@ -207,33 +207,6 @@ True(256, 0, 0) // ⛔️ at compile time
 </div>
 
 </div>
-
-</div>
-
-## _first-class_?
-
-In our prototype, refinement types are ordinary Scala types, participating in inference, **overload resolution** (example 3), subtyping, etc.
-
-<div class="fragment">
-
-In contrast, Liquid Haskell is a plugin that runs after type checking:
-
-```haskell
-{-@ x :: {v:Int | v mod 2 == 0 } @-}
-let x = 42 :: Int in ...
-```
-
-“It's sort of like you're doing two things at once [...] you're also talking to GHC, but you're also talking to LiquidHaskell.” <small>— a participant in [Usability Barriers for Liquid Types](https://dl.acm.org/doi/10.1145/3729327) (Gamboa et al., PLDI 2025)</small>
-
-</div>
-
-<div class="fragment">
-
-Our implementation is directly integrated into the Scala 3 compiler:
-
-```scala
-val x: (Int with x % 2 == 0) = 42
-```
 
 </div>
 
@@ -958,6 +931,33 @@ val w: {res: Int with res == 5} = inc(inc(3))
 <div class="fragment">
 
 This rule needs the called function to terminate: a result type says nothing about a call that never returns.
+
+</div>
+
+## Backup: _first-class_?
+
+In our prototype, refinement types are ordinary Scala types, participating in inference, **overload resolution** (example 3), subtyping, etc.
+
+<div class="fragment">
+
+In contrast, Liquid Haskell is a plugin that runs after type checking:
+
+```haskell
+{-@ x :: {v:Int | v mod 2 == 0 } @-}
+let x = 42 :: Int in ...
+```
+
+“It's sort of like you're doing two things at once [...] you're also talking to GHC, but you're also talking to LiquidHaskell.” <small>— a participant in [Usability Barriers for Liquid Types](https://dl.acm.org/doi/10.1145/3729327) (Gamboa et al., PLDI 2025)</small>
+
+</div>
+
+<div class="fragment">
+
+Our implementation is directly integrated into the Scala 3 compiler:
+
+```scala
+val x: (Int with x % 2 == 0) = 42
+```
 
 </div>
 
