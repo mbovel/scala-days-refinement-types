@@ -363,7 +363,7 @@ Unlike libraries:
 
 </div>
 
-## Working with agents
+## Strong specifications for agents
 
 <div class="chat">
 <div class="me">Please implement <code>def foo</code>.</div>
@@ -372,7 +372,7 @@ Unlike libraries:
 <div class="agent fragment">You're absolutely right!</div>
 </div>
 
-## Working with agents
+## Strong specifications for agents
 
 <div class="chat">
 <div class="me">Please implement <code>def foo(): {res: Any with correct(res)}</code>.</div>
