@@ -49,7 +49,7 @@ href="https://matt.bovel.net">matt.bovel.net</a></p>
 
 <section id="what-is-this-about" class="slide level2">
 <h2>What is this about?</h2>
-<p>A <em>prototype</em> implementation of (logical) refinement types for
+<p>A <em>prototype</em> implementation of refinement types for
 Scala.</p>
 <div class="fragment">
 <p>A <em>refinement type</em> is a type <em>refined</em> with a logical
@@ -85,8 +85,9 @@ Bernet</a> for his Master thesis.</p>
 ): {zs: List[T] with zs.size == xs.size + ys.size}</code></pre>
 <pre class="scala fragment"><code>val xs: List[Int] = ???
 val ys: List[Int] = ???
-zip(concat(xs, ys), concat(ys, xs))
-zip(concat(xs, ys), concat(xs, xs)) // ⛔️</code></pre>
+zip(concat(xs, ys), concat(ys, xs)) // ✅
+zip(concat(xs, ys), concat(xs, xs)) // ⛔️ found size xs.size + xs.size,
+                                    //    required xs.size + ys.size</code></pre>
 </section>
 <section id="whoami" class="slide level2">
 <h2>whoami</h2>

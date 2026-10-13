@@ -8,7 +8,7 @@ title-slide-attributes:
 
 ## What is this about?
 
-A *prototype* implementation of (logical) refinement types for Scala.
+A *prototype* implementation of refinement types for Scala.
 
 <div class="fragment">
 
@@ -65,8 +65,9 @@ def concat[T](
 ```scala {.fragment}
 val xs: List[Int] = ???
 val ys: List[Int] = ???
-zip(concat(xs, ys), concat(ys, xs))
-zip(concat(xs, ys), concat(xs, xs)) // ⛔️
+zip(concat(xs, ys), concat(ys, xs)) // ✅
+zip(concat(xs, ys), concat(xs, xs)) // ⛔️ found size xs.size + xs.size,
+                                    //    required xs.size + ys.size
 ```
 
 ## whoami

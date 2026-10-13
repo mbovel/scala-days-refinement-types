@@ -17,5 +17,5 @@ def concat[T](
 def ex1 =
   val xs: List[Int] = ???
   val ys: List[Int] = ???
-  zip(concat(xs, ys), concat(ys, xs))
+  zip(concat(xs, ys), concat(ys, xs)) // ✅
   // zip(concat(xs, ys), concat(xs, xs)) // error
